@@ -1,0 +1,292 @@
+---
+title: 'Fee Calculation'
+description: 'Calculate transaction fees before charging customers'
+icon: 'calculator'
+---
+
+## Overview
+
+The Fees API allows you to calculate the exact fees that will be charged for a transaction before processing the payment. This helps you determine the total amount to charge customers or decide whether to absorb the fees yourself.
+
+## Understanding Fee Structure
+
+Flutterwave's fee structure includes:
+
+- **Rave fee** - The standard fee charged by Flutterwave per transaction
+- **Merchant fee** - Additional markup fee (applicable when using subdomains/white-label solutions)
+- **International card fee** - Additional fees for international cards (detected via card BIN)
+
+### Fee Response Breakdown
+
+When you calculate fees, the response contains these key fields:
+
+- `data.charge_amount` - The total amount to charge (amount + fee)
+- `data.fee` - Cumulative fee (merchantfee + ravefee)
+- `data.merchantfee` - Your markup fee if using a subdomain
+- `data.ravefee` - Flutterwave's transaction fee
+
+<Note>
+Merchant fees only apply when using Flutterwave's white-label subdomain feature, which allows you to offer customized payment services with your own markup.
+</Note>
+
+## Available Methods
+
+The `Fees` class provides two methods for calculating fees:
+
+### getFees()
+
+Calculates standard fees for a transaction based on amount and currency.
+
+**Method Signature:**
+```java
+public JSONObject getFees()
+```
+
+**Parameters:**
+- `amount` - The transaction amount
+- `currency` - The currency code (e.g., NGN, USD, GBP)
+
+**Returns:** `JSONObject` containing fee breakdown
+
+### getFeesForCard6()
+
+Calculates fees including international card detection based on the card's BIN (first 6 digits).
+
+**Method Signature:**
+```java
+public JSONObject getFeesForCard6()
+```
+
+**Parameters:**
+- `amount` - The transaction amount
+- `currency` - The currency code
+- `card6` - First 6 digits of the card number
+
+**Returns:** `JSONObject` containing fee breakdown with international card fees (if applicable)
+
+<Warning>
+Use `getFeesForCard6()` when you have the customer's card BIN to get accurate international card fees. This ensures proper fee calculation for cross-border transactions.
+</Warning>
+
+## Setup
+
+<Steps>
+  <Step title="Configure API credentials">
+    Set up your Flutterwave API keys and environment:
+    
+    ```java
+    RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+    RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+    RaveConstant.ENVIRONMENT = Environment.STAGING; // or Environment.LIVE
+    ```
+  </Step>
+  
+  <Step title="Create Fees instance">
+    Initialize a new `Fees` object:
+    
+    ```java
+    Fees fee = new Fees();
+    ```
+  </Step>
+  
+  <Step title="Set fee parameters">
+    Configure the amount, currency, and optionally card BIN:
+    
+    ```java
+    fee.setAmount("500")
+       .setCurrency("NGN")
+       .setCard6("829222"); // Optional: for card-specific fees
+    ```
+  </Step>
+  
+  <Step title="Calculate fees">
+    Call the appropriate fee calculation method:
+    
+    ```java
+    JSONObject standardFees = fee.getFees();
+    JSONObject cardFees = fee.getFeesForCard6();
+    ```
+  </Step>
+</Steps>
+
+## Complete Example
+
+```java
+import com.github.theresasogunle.Fees;
+import com.github.theresasogunle.RaveConstant;
+import com.github.theresasogunle.Environment;
+import org.json.JSONObject;
+
+public class CalculateFees {
+    public static void main(String[] args) {
+        // Configure API credentials
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        
+        // Create fees instance
+        Fees fee = new Fees();
+        
+        // Set field values
+        fee.setAmount("500")
+           .setCard6("829222")
+           .setCurrency("NGN");
+        
+        // Get standard fees
+        JSONObject standardFees = fee.getFees();
+        System.out.println("Standard fees: " + standardFees);
+        
+        // Get fees with card BIN detection
+        JSONObject cardFees = fee.getFeesForCard6();
+        System.out.println("Card-specific fees: " + cardFees);
+    }
+}
+```
+
+## Handling Fee Response
+
+Here's how to parse and use the fee calculation response:
+
+```java
+JSONObject response = fee.getFees();
+
+if (response.getString("status").equals("success")) {
+    JSONObject data = response.getJSONObject("data");
+    
+    // Extract fee information
+    double chargeAmount = data.getDouble("charge_amount");
+    double totalFee = data.getDouble("fee");
+    double raveFee = data.getDouble("ravefee");
+    double merchantFee = data.optDouble("merchantfee", 0.0);
+    
+    System.out.println("Original amount: 500");
+    System.out.println("Rave fee: " + raveFee);
+    System.out.println("Merchant fee: " + merchantFee);
+    System.out.println("Total fee: " + totalFee);
+    System.out.println("Amount to charge: " + chargeAmount);
+    
+    // Decide whether to pass fees to customer or absorb them
+} else {
+    System.err.println("Fee calculation failed: " + response.getString("message"));
+}
+```
+
+## Use Cases
+
+### 1. Passing Fees to Customers
+
+Calculate the total amount including fees to charge the customer:
+
+```java
+public double calculateTotalCharge(String amount, String currency) {
+    Fees fee = new Fees();
+    fee.setAmount(amount).setCurrency(currency);
+    
+    JSONObject response = fee.getFees();
+    
+    if (response.getString("status").equals("success")) {
+        return response.getJSONObject("data").getDouble("charge_amount");
+    }
+    
+    return Double.parseDouble(amount); // Fallback to original amount
+}
+```
+
+### 2. Absorbing Fees
+
+Determine how much you'll receive after fees are deducted:
+
+```java
+public void displayNetAmount(String amount, String currency) {
+    Fees fee = new Fees();
+    fee.setAmount(amount).setCurrency(currency);
+    
+    JSONObject response = fee.getFees();
+    
+    if (response.getString("status").equals("success")) {
+        double totalFee = response.getJSONObject("data").getDouble("fee");
+        double netAmount = Double.parseDouble(amount) - totalFee;
+        
+        System.out.println("Customer pays: " + amount);
+        System.out.println("Fees deducted: " + totalFee);
+        System.out.println("You receive: " + netAmount);
+    }
+}
+```
+
+### 3. International Card Detection
+
+Calculate fees with international card consideration:
+
+```java
+public void checkInternationalFees(String amount, String currency, String cardBin) {
+    Fees fee = new Fees();
+    fee.setAmount(amount)
+       .setCurrency(currency)
+       .setCard6(cardBin);
+    
+    JSONObject response = fee.getFeesForCard6();
+    
+    if (response.getString("status").equals("success")) {
+        JSONObject data = response.getJSONObject("data");
+        double raveFee = data.getDouble("ravefee");
+        
+        // Compare with standard fees to detect international premium
+        System.out.println("Fee for this card: " + raveFee);
+    }
+}
+```
+
+## Best Practices
+
+1. **Calculate before charging** - Always check fees before initiating a transaction
+2. **Display to customers** - Show fee breakdown transparently if passing fees to customers
+3. **Handle card detection** - Use `getFeesForCard6()` when you have card BIN for accurate international fees
+4. **Cache fee rules** - Consider caching fee calculations for common amounts to reduce API calls
+5. **Error handling** - Always handle cases where fee calculation fails
+6. **Currency consistency** - Ensure the currency used for fee calculation matches the transaction currency
+
+## Fee Calculation in Payment Flow
+
+Integrate fee calculation into your payment workflow:
+
+```java
+import com.github.theresasogunle.*;
+import org.json.JSONObject;
+
+public class PaymentWithFees {
+    
+    public static void processPayment(String amount, String currency, String cardBin) {
+        // Step 1: Calculate fees
+        Fees fee = new Fees();
+        fee.setAmount(amount)
+           .setCurrency(currency)
+           .setCard6(cardBin);
+        
+        JSONObject feeResponse = fee.getFeesForCard6();
+        
+        if (!feeResponse.getString("status").equals("success")) {
+            System.err.println("Failed to calculate fees");
+            return;
+        }
+        
+        // Step 2: Get charge amount
+        double chargeAmount = feeResponse.getJSONObject("data").getDouble("charge_amount");
+        
+        // Step 3: Display to user
+        System.out.println("Item price: " + amount + " " + currency);
+        System.out.println("Processing fee: " + 
+            feeResponse.getJSONObject("data").getDouble("fee"));
+        System.out.println("Total to charge: " + chargeAmount + " " + currency);
+        
+        // Step 4: Proceed with payment using chargeAmount
+        // ... initialize card payment with chargeAmount
+    }
+}
+```
+
+## Next Steps
+
+- Learn about [transaction verification](/transactions/verify)
+- Explore [card payment processing](/payments/card-payments)
+- Understand [refund policies](/transactions/refunds)

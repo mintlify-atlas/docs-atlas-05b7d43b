@@ -1,0 +1,408 @@
+---
+title: 'Alternative Payment Methods'
+description: 'Accept payments via USSD, mobile money, and M-Pesa'
+icon: 'mobile-screen'
+---
+
+The `AlternativePayment` class provides support for various alternative payment methods across Africa, including Nigerian USSD, Ghana Mobile Money, and Kenya M-Pesa.
+
+## Supported Payment Methods
+
+<CardGroup cols={3}>
+  <Card title="Nigerian USSD" icon="hashtag">
+    GTBank and Zenith Bank USSD payments
+  </Card>
+  
+  <Card title="Ghana Mobile Money" icon="mobile">
+    MTN, Vodafone, AirtelTigo, and Tigo mobile money
+  </Card>
+  
+  <Card title="Kenya M-Pesa" icon="money-bill-transfer">
+    Safaricom M-Pesa payments
+  </Card>
+</CardGroup>
+
+## Configuration
+
+First, configure your Rave credentials:
+
+```java
+RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+RaveConstant.ENVIRONMENT = Environment.STAGING; // or Environment.LIVE
+```
+
+## Nigerian USSD
+
+USSD payments allow customers to complete transactions by dialing a code on their mobile phone. This method works with GTBank and Zenith Bank.
+
+### Parameters
+
+<ParamField path="accountnumber" type="string" required>
+  Customer's account number
+</ParamField>
+
+<ParamField path="accountbank" type="string" required>
+  Bank short code ("058" for GTBank, "057" for Zenith)
+</ParamField>
+
+<ParamField path="amount" type="string" required>
+  Transaction amount
+</ParamField>
+
+<ParamField path="email" type="string" required>
+  Customer's email address
+</ParamField>
+
+<ParamField path="txRef" type="string" required>
+  Your unique transaction reference
+</ParamField>
+
+<ParamField path="firstname" type="string" required>
+  Customer's first name
+</ParamField>
+
+<ParamField path="lastname" type="string" required>
+  Customer's last name
+</ParamField>
+
+<ParamField path="pin" type="string" required>
+  Customer's account PIN
+</ParamField>
+
+<ParamField path="IP" type="string" required>
+  Customer's IP address
+</ParamField>
+
+<ParamField path="currency" type="string" default="NGN">
+  Currency code (must be "NGN")
+</ParamField>
+
+<ParamField path="country" type="string" default="NG">
+  Country code (must be "NG")
+</ParamField>
+
+### Example
+
+```java
+import com.github.theresasogunle.*;
+import org.json.JSONObject;
+
+public class UssdPaymentExample {
+    public static void main(String[] args) {
+        // Configure Rave
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        
+        AlternativePayment ch = new AlternativePayment();
+        ch.setAccountnumber("0690000004")
+            .setAccountbank("044")
+            .setCurrency("NGN")
+            .setCountry("NG")
+            .setAmount("6000")
+            .setFirstname("John")
+            .setLastname("Doe")
+            .setPin("3310")
+            .setEmail("customer@example.com")
+            .setIP("103.238.105.185")
+            .setTxRef("MXX-ASC-4578");
+        
+        JSONObject chargeUssd = ch.chargeNigerianUssd();
+        System.out.println(chargeUssd);
+    }
+}
+```
+
+<Note>
+  The customer will receive a USSD code to dial on their phone to complete the payment. The payment type is automatically set to `"ussd"`.
+</Note>
+
+## Ghana Mobile Money
+
+Accept payments from major Ghanaian mobile money networks including MTN, Vodafone, AirtelTigo, and Tigo.
+
+### Parameters
+
+<ParamField path="orderRef" type="string" required>
+  Unique reference for the mobile money transaction (merchant-provided)
+</ParamField>
+
+<ParamField path="network" type="string" required>
+  Mobile money network provider (e.g., "MTN", "VODAFONE", "TIGO")
+</ParamField>
+
+<ParamField path="phonenumber" type="string" required>
+  Customer's mobile money phone number
+</ParamField>
+
+<ParamField path="amount" type="string" required>
+  Transaction amount
+</ParamField>
+
+<ParamField path="email" type="string" required>
+  Customer's email address
+</ParamField>
+
+<ParamField path="txRef" type="string" required>
+  Your unique transaction reference
+</ParamField>
+
+<ParamField path="firstname" type="string" required>
+  Customer's first name
+</ParamField>
+
+<ParamField path="lastname" type="string" required>
+  Customer's last name
+</ParamField>
+
+<ParamField path="pin" type="string" required>
+  Customer's mobile money PIN
+</ParamField>
+
+<ParamField path="IP" type="string" required>
+  Customer's IP address
+</ParamField>
+
+<ParamField path="currency" type="string" default="GHS">
+  Currency code (must be "GHS")
+</ParamField>
+
+<ParamField path="country" type="string" default="GH">
+  Country code (must be "GH")
+</ParamField>
+
+### Example
+
+```java
+import com.github.theresasogunle.*;
+import org.json.JSONObject;
+
+public class MobileMoneyExample {
+    public static void main(String[] args) {
+        // Configure Rave
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        
+        AlternativePayment ch = new AlternativePayment();
+        ch.setOrderRef("0690000")
+            .setNetwork("MTN")
+            .setCurrency("GHS")
+            .setCountry("GH")
+            .setAmount("4000")
+            .setFirstname("John")
+            .setLastname("Doe")
+            .setPin("3310")
+            .setEmail("customer@example.com")
+            .setIP("103.238.105.185")
+            .setTxRef("MXX-90-49578")
+            .setPhonenumber("08020000000");
+        
+        JSONObject chargeGh = ch.chargeGhanaMobileMoney();
+        System.out.println(chargeGh);
+    }
+}
+```
+
+<Warning>
+  Ensure the phone number format matches the network provider's requirements and that the customer has sufficient balance in their mobile money account.
+</Warning>
+
+### Supported Networks
+
+- **MTN**: `"MTN"`
+- **Vodafone**: `"VODAFONE"`
+- **AirtelTigo**: `"AIRTELTIGO"`
+- **Tigo**: `"TIGO"`
+
+## Kenya M-Pesa
+
+Accept payments via Safaricom M-Pesa, Kenya's leading mobile money platform.
+
+### Parameters
+
+<ParamField path="orderRef" type="string" required>
+  Unique reference for the M-Pesa transaction (merchant-provided)
+</ParamField>
+
+<ParamField path="phonenumber" type="string" required>
+  Customer's M-Pesa phone number (format: 0XXXXXXXXX)
+</ParamField>
+
+<ParamField path="amount" type="string" required>
+  Transaction amount
+</ParamField>
+
+<ParamField path="email" type="string" required>
+  Customer's email address
+</ParamField>
+
+<ParamField path="txRef" type="string" required>
+  Your unique transaction reference
+</ParamField>
+
+<ParamField path="firstname" type="string" required>
+  Customer's first name
+</ParamField>
+
+<ParamField path="lastname" type="string" required>
+  Customer's last name
+</ParamField>
+
+<ParamField path="pin" type="string" required>
+  Customer's M-Pesa PIN
+</ParamField>
+
+<ParamField path="IP" type="string" required>
+  Customer's IP address
+</ParamField>
+
+<ParamField path="currency" type="string" default="KES">
+  Currency code (must be "KES")
+</ParamField>
+
+<ParamField path="country" type="string" default="KE">
+  Country code (must be "KE")
+</ParamField>
+
+### Example
+
+```java
+import com.github.theresasogunle.*;
+import org.json.JSONObject;
+
+public class MpesaPaymentExample {
+    public static void main(String[] args) {
+        // Configure Rave
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        
+        AlternativePayment ch = new AlternativePayment();
+        ch.setCurrency("KES")
+            .setCountry("KE")
+            .setAmount("6000")
+            .setFirstname("John")
+            .setLastname("Doe")
+            .setPin("3310")
+            .setEmail("customer@example.com")
+            .setIP("103.238.105.185")
+            .setTxRef("MXX-ASC-4578")
+            .setOrderRef("y77yy")
+            .setPhonenumber("0903672978");
+        
+        JSONObject chargeMpesa = ch.chargeKenyaMpesa();
+        System.out.println(chargeMpesa);
+    }
+}
+```
+
+<Note>
+  The customer will receive an M-Pesa prompt on their phone to authorize the payment. They must enter their M-Pesa PIN on their phone to complete the transaction.
+</Note>
+
+## Verifying Transactions
+
+For all alternative payment methods, you should verify the transaction status after charging:
+
+```java
+import com.github.theresasogunle.Transaction;
+
+// After charging
+Transaction t = new Transaction();
+t.setFlwref("FLW-MOCK-d310263f5f73e51d01e6dab32c893679")
+    .setTxRef("MXX-ASC-4578");
+
+// Use xrequery for alternative payment methods
+JSONObject response = t.verifyTransactionXrequery();
+System.out.println("Transaction Status: " + response);
+```
+
+<Steps>
+  <Step title="Initiate Payment">
+    Call the appropriate charge method (`chargeNigerianUssd()`, `chargeGhanaMobileMoney()`, or `chargeKenyaMpesa()`)
+  </Step>
+  
+  <Step title="Get Reference">
+    Extract the `flwRef` from the charge response
+  </Step>
+  
+  <Step title="Customer Completes Payment">
+    Customer dials USSD code or authorizes payment on their mobile device
+  </Step>
+  
+  <Step title="Verify Transaction">
+    Use the Transaction class to verify the payment status with `verifyTransactionXrequery()`
+  </Step>
+</Steps>
+
+## Method Reference
+
+| Method | Payment Type | Returns | Description |
+|--------|-------------|---------|-------------|
+| `chargeNigerianUssd()` | Nigerian USSD | `JSONObject` | Charges via GTB/Zenith USSD |
+| `chargeGhanaMobileMoney()` | Ghana Mobile Money | `JSONObject` | Charges via Ghanaian mobile networks |
+| `chargeKenyaMpesa()` | Kenya M-Pesa | `JSONObject` | Charges via Safaricom M-Pesa |
+
+## Payment Type Indicators
+
+Each method automatically sets the appropriate payment type:
+
+- **Nigerian USSD**: `payment_type: "ussd"`
+- **Ghana Mobile Money**: `payment_type: "mobilemoneygh"`, `is_mobile_money_gh: "1"`
+- **Kenya M-Pesa**: `payment_type: "mpesa"`, `is_mpesa: "1"`
+
+## Best Practices
+
+<Tabs>
+  <Tab title="USSD">
+    - Clearly display the USSD code to the customer
+    - Provide instructions on how to dial the code
+    - Set appropriate timeout periods (USSD sessions can expire)
+    - Implement webhook handlers for async updates
+  </Tab>
+  
+  <Tab title="Mobile Money">
+    - Validate phone number format before charging
+    - Verify the network matches the phone number
+    - Handle scenarios where customers have insufficient balance
+    - Provide clear error messages
+  </Tab>
+  
+  <Tab title="M-Pesa">
+    - Ensure phone numbers are in correct format (0XXXXXXXXX)
+    - Wait for customer to complete authorization on their device
+    - Implement proper timeout handling (M-Pesa prompts expire)
+    - Use webhooks for real-time payment updates
+  </Tab>
+</Tabs>
+
+## Troubleshooting
+
+### Common Issues
+
+**Transaction Pending**
+- Customer hasn't completed the payment on their device
+- Use `verifyTransactionXrequery()` to check current status
+- Wait for webhook notification if configured
+
+**Invalid Network/Provider**
+- Verify the network name is correct and supported
+- Ensure currency and country match the payment method
+
+**Phone Number Format**
+- Ghana Mobile Money: Include country code if required
+- Kenya M-Pesa: Use format 0XXXXXXXXX (not +254XXXXXXXXX)
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Card Payments" icon="credit-card" href="/payments/card-payments">
+    Accept credit and debit card payments
+  </Card>
+  
+  <Card title="Account Payments" icon="building-columns" href="/payments/account-payments">
+    Charge customer bank accounts directly
+  </Card>
+</CardGroup>

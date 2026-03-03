@@ -1,0 +1,179 @@
+---
+title: 'Fees'
+description: 'Calculate transaction fees for Flutterwave payments'
+---
+
+## Overview
+
+The `Fees` class allows you to calculate transaction fees before processing a payment. This helps you display accurate fee information to your users and understand the costs associated with different transaction types.
+
+## Class: Fees
+
+```java
+package com.github.theresasogunle;
+
+public class Fees
+```
+
+## Methods
+
+### getFees()
+
+Calculates the transaction fee for a given amount and currency.
+
+```java
+public JSONObject getFees()
+```
+
+**Returns:** `JSONObject` - Fee calculation details including the fee amount and total
+
+**Description:** This method calculates the standard transaction fee based on the amount and currency set in the class properties. The fee is calculated using Flutterwave's standard fee structure.
+
+#### Example
+
+```java
+Fees fees = new Fees();
+fees.setAmount("5000")
+    .setCurrency("NGN");
+
+JSONObject feeDetails = fees.getFees();
+System.out.println("Fee: " + feeDetails.toString());
+```
+
+---
+
+### getFeesForCard6()
+
+Calculates the transaction fee including international card fees based on the first 6 digits of the card number.
+
+```java
+public JSONObject getFeesForCard6()
+```
+
+**Returns:** `JSONObject` - Fee calculation details including international fees if applicable
+
+**Description:** This method is used when the user has entered the first 6 digits of their card number. It helps determine international fees on the transaction if the card being used is an international card. The BIN (Bank Identification Number) is used to identify the card type and origin.
+
+#### Parameters Required
+
+Before calling this method, set the following properties:
+
+<ParamField path="amount" type="String" required>
+  The transaction amount
+</ParamField>
+
+<ParamField path="currency" type="String" required>
+  The currency code (e.g., "NGN", "USD", "GHS")
+</ParamField>
+
+<ParamField path="card6" type="String" required>
+  The first 6 digits of the card number (BIN)
+</ParamField>
+
+#### Example
+
+```java
+Fees fees = new Fees();
+fees.setAmount("5000")
+    .setCurrency("NGN")
+    .setCard6("539983");
+
+JSONObject feeDetails = fees.getFeesForCard6();
+System.out.println("Fee with card check: " + feeDetails.toString());
+```
+
+---
+
+## Setter Methods
+
+The `Fees` class uses a fluent interface pattern, allowing you to chain setter methods.
+
+### setAmount()
+
+Sets the transaction amount.
+
+```java
+public Fees setAmount(String amount)
+```
+
+<ParamField path="amount" type="String" required>
+  The transaction amount as a string
+</ParamField>
+
+**Returns:** `Fees` - Returns the instance for method chaining
+
+---
+
+### setCurrency()
+
+Sets the currency for the transaction.
+
+```java
+public Fees setCurrency(String currency)
+```
+
+<ParamField path="currency" type="String" required>
+  The currency code (e.g., "NGN", "USD", "GHS", "KES")
+</ParamField>
+
+**Returns:** `Fees` - Returns the instance for method chaining
+
+---
+
+### setCard6()
+
+Sets the first 6 digits of the card number (BIN).
+
+```java
+public Fees setCard6(String card6)
+```
+
+<ParamField path="card6" type="String" required>
+  The first 6 digits of the card number
+</ParamField>
+
+**Returns:** `Fees` - Returns the instance for method chaining
+
+---
+
+## Getter Methods
+
+### getAmount()
+
+Retrieves the currently set amount.
+
+```java
+public String getAmount()
+```
+
+**Returns:** `String` - The transaction amount
+
+---
+
+### getCurrency()
+
+Retrieves the currently set currency.
+
+```java
+public String getCurrency()
+```
+
+**Returns:** `String` - The currency code
+
+---
+
+### getCard6()
+
+Retrieves the currently set card BIN.
+
+```java
+public String getCard6()
+```
+
+**Returns:** `String` - The first 6 digits of the card number
+
+---
+
+<Note>
+All fee calculations require your public key to be configured in `RaveConstant.PUBLIC_KEY`.
+</Note>

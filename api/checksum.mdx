@@ -1,0 +1,458 @@
+---
+title: 'Integrity Checksum'
+description: 'Generate integrity checksums to verify payment data'
+---
+
+## Overview
+
+The `IntegrityChecksum` class generates SHA-256 checksums for payment data to ensure data integrity and prevent tampering. This is particularly useful for inline payment implementations where you need to verify that payment parameters haven't been modified.
+
+## Class: IntegrityChecksum
+
+```java
+package com.github.theresasogunle;
+
+public class IntegrityChecksum
+```
+
+## Methods
+
+### integrityChecksum()
+
+Generates an integrity checksum for the payment data.
+
+```java
+public String integrityChecksum()
+```
+
+**Returns:** `String` - A Base64-encoded SHA-256 hash of the payment parameters
+
+**Description:** This method creates a secure checksum by:
+1. Collecting all payment parameters into a HashMap
+2. Sorting the parameter keys alphabetically
+3. Concatenating all values in sorted order
+4. Appending the secret key
+5. Generating a SHA-256 hash of the concatenated string
+6. Encoding the hash in Base64
+
+The resulting checksum can be used to verify that payment data hasn't been tampered with during transmission.
+
+#### Parameters Required
+
+Before calling this method, set all required payment parameters:
+
+<ParamField path="amount" type="String" required>
+  The transaction amount
+</ParamField>
+
+<ParamField path="payment_method" type="String" required>
+  The payment method (e.g., "card", "account")
+</ParamField>
+
+<ParamField path="custom_description" type="String">
+  Custom description for the transaction
+</ParamField>
+
+<ParamField path="custom_logo" type="String">
+  URL to custom logo for payment page
+</ParamField>
+
+<ParamField path="country" type="String" required>
+  Country code (e.g., "NG", "GH", "KE")
+</ParamField>
+
+<ParamField path="currency" type="String" required>
+  Currency code (e.g., "NGN", "USD", "GHS")
+</ParamField>
+
+<ParamField path="customer_email" type="String" required>
+  Customer's email address
+</ParamField>
+
+<ParamField path="customer_firstname" type="String" required>
+  Customer's first name
+</ParamField>
+
+<ParamField path="customer_lastname" type="String" required>
+  Customer's last name
+</ParamField>
+
+<ParamField path="customer_phone" type="String" required>
+  Customer's phone number
+</ParamField>
+
+<ParamField path="txref" type="String" required>
+  Your unique transaction reference
+</ParamField>
+
+#### Example
+
+```java
+IntegrityChecksum checksum = new IntegrityChecksum();
+
+checksum.setAmount("5000")
+        .setPayment_method("card")
+        .setCustom_description("Payment for services")
+        .setCountry("NG")
+        .setCurrency("NGN")
+        .setCustomer_email("customer@example.com")
+        .setCustomer_firstname("John")
+        .setCustomer_lastname("Doe")
+        .setCustomer_phone("+2348012345678")
+        .setTxref("TXN-" + System.currentTimeMillis());
+
+String hash = checksum.integrityChecksum();
+System.out.println("Checksum: " + hash);
+```
+
+---
+
+## Setter Methods
+
+All setter methods return the `IntegrityChecksum` instance for method chaining.
+
+### setAmount()
+
+Sets the transaction amount.
+
+```java
+public IntegrityChecksum setAmount(String amount)
+```
+
+<ParamField path="amount" type="String" required>
+  The transaction amount
+</ParamField>
+
+**Returns:** `IntegrityChecksum` - Returns the instance for method chaining
+
+---
+
+### setPayment_method()
+
+Sets the payment method.
+
+```java
+public IntegrityChecksum setPayment_method(String payment_method)
+```
+
+<ParamField path="payment_method" type="String" required>
+  The payment method (e.g., "card", "account", "ussd")
+</ParamField>
+
+**Returns:** `IntegrityChecksum` - Returns the instance for method chaining
+
+---
+
+### setCustom_description()
+
+Sets a custom description for the transaction.
+
+```java
+public IntegrityChecksum setCustom_description(String custom_description)
+```
+
+<ParamField path="custom_description" type="String">
+  Custom transaction description
+</ParamField>
+
+**Returns:** `IntegrityChecksum` - Returns the instance for method chaining
+
+---
+
+### setCustom_logo()
+
+Sets a custom logo URL for the payment page.
+
+```java
+public IntegrityChecksum setCustom_logo(String custom_logo)
+```
+
+<ParamField path="custom_logo" type="String">
+  URL to the custom logo image
+</ParamField>
+
+**Returns:** `IntegrityChecksum` - Returns the instance for method chaining
+
+---
+
+### setCountry()
+
+Sets the country code.
+
+```java
+public IntegrityChecksum setCountry(String country)
+```
+
+<ParamField path="country" type="String" required>
+  ISO country code (e.g., "NG", "GH", "KE", "ZA")
+</ParamField>
+
+**Returns:** `IntegrityChecksum` - Returns the instance for method chaining
+
+---
+
+### setCurrency()
+
+Sets the transaction currency.
+
+```java
+public IntegrityChecksum setCurrency(String currency)
+```
+
+<ParamField path="currency" type="String" required>
+  Currency code (e.g., "NGN", "USD", "GHS", "KES")
+</ParamField>
+
+**Returns:** `IntegrityChecksum` - Returns the instance for method chaining
+
+---
+
+### setCustomer_email()
+
+Sets the customer's email address.
+
+```java
+public IntegrityChecksum setCustomer_email(String customer_email)
+```
+
+<ParamField path="customer_email" type="String" required>
+  Customer's email address
+</ParamField>
+
+**Returns:** `IntegrityChecksum` - Returns the instance for method chaining
+
+---
+
+### setCustomer_firstname()
+
+Sets the customer's first name.
+
+```java
+public IntegrityChecksum setCustomer_firstname(String customer_firstname)
+```
+
+<ParamField path="customer_firstname" type="String" required>
+  Customer's first name
+</ParamField>
+
+**Returns:** `IntegrityChecksum` - Returns the instance for method chaining
+
+---
+
+### setCustomer_lastname()
+
+Sets the customer's last name.
+
+```java
+public IntegrityChecksum setCustomer_lastname(String customer_lastname)
+```
+
+<ParamField path="customer_lastname" type="String" required>
+  Customer's last name
+</ParamField>
+
+**Returns:** `IntegrityChecksum` - Returns the instance for method chaining
+
+---
+
+### setCustomer_phone()
+
+Sets the customer's phone number.
+
+```java
+public IntegrityChecksum setCustomer_phone(String customer_phone)
+```
+
+<ParamField path="customer_phone" type="String" required>
+  Customer's phone number with country code
+</ParamField>
+
+**Returns:** `IntegrityChecksum` - Returns the instance for method chaining
+
+---
+
+### setTxref()
+
+Sets the unique transaction reference.
+
+```java
+public IntegrityChecksum setTxref(String txref)
+```
+
+<ParamField path="txref" type="String" required>
+  Your unique transaction reference
+</ParamField>
+
+**Returns:** `IntegrityChecksum` - Returns the instance for method chaining
+
+---
+
+## Getter Methods
+
+### getAmount()
+
+```java
+public String getAmount()
+```
+
+**Returns:** `String` - The transaction amount
+
+---
+
+### getPayment_method()
+
+```java
+public String getPayment_method()
+```
+
+**Returns:** `String` - The payment method
+
+---
+
+### getCustom_description()
+
+```java
+public String getCustom_description()
+```
+
+**Returns:** `String` - The custom description
+
+---
+
+### getCustom_logo()
+
+```java
+public String getCustom_logo()
+```
+
+**Returns:** `String` - The custom logo URL
+
+---
+
+### getCountry()
+
+```java
+public String getCountry()
+```
+
+**Returns:** `String` - The country code
+
+---
+
+### getCurrency()
+
+```java
+public String getCurrency()
+```
+
+**Returns:** `String` - The currency code
+
+---
+
+### getCustomer_email()
+
+```java
+public String getCustomer_email()
+```
+
+**Returns:** `String` - The customer's email
+
+---
+
+### getCustomer_firstname()
+
+```java
+public String getCustomer_firstname()
+```
+
+**Returns:** `String` - The customer's first name
+
+---
+
+### getCustomer_lastname()
+
+```java
+public String getCustomer_lastname()
+```
+
+**Returns:** `String` - The customer's last name
+
+---
+
+### getCustomer_phone()
+
+```java
+public String getCustomer_phone()
+```
+
+**Returns:** `String` - The customer's phone number
+
+---
+
+### getTxref()
+
+```java
+public String getTxref()
+```
+
+**Returns:** `String` - The transaction reference
+
+---
+
+## How It Works
+
+The integrity checksum algorithm:
+
+1. **Collects Parameters:** All payment parameters including PBFPubKey are added to a HashMap
+2. **Sorts Keys:** Parameter keys are sorted alphabetically
+3. **Concatenates Values:** Values are concatenated in the sorted key order
+4. **Appends Secret:** The secret key is appended to the concatenated string
+5. **Hashes:** SHA-256 hash is generated from the final string
+6. **Encodes:** The hash is Base64-encoded for transmission
+
+<Note>
+The checksum includes your public key (PBFPubKey) and uses your secret key (SECKEY) in the hashing process. Ensure both are properly configured in `RaveConstant`.
+</Note>
+
+## Use Cases
+
+- **Inline Payments:** Verify payment data integrity when using Flutterwave's inline JavaScript
+- **Webhook Validation:** Verify that webhook data hasn't been tampered with
+- **Payment Form Security:** Ensure payment form data remains unchanged during submission
+
+## Complete Example
+
+```java
+import com.github.theresasogunle.IntegrityChecksum;
+
+public class PaymentChecksum {
+    public static void main(String[] args) {
+        // Create checksum instance
+        IntegrityChecksum checksum = new IntegrityChecksum();
+        
+        // Set all required parameters
+        checksum.setAmount("10000")
+                .setPayment_method("card")
+                .setCustom_description("Premium subscription")
+                .setCustom_logo("https://example.com/logo.png")
+                .setCountry("NG")
+                .setCurrency("NGN")
+                .setCustomer_email("john.doe@example.com")
+                .setCustomer_firstname("John")
+                .setCustomer_lastname("Doe")
+                .setCustomer_phone("+2348012345678")
+                .setTxref("TXN-" + System.currentTimeMillis());
+        
+        // Generate checksum
+        String integrityHash = checksum.integrityChecksum();
+        
+        System.out.println("Integrity Hash: " + integrityHash);
+        
+        // Use this hash in your inline payment script
+    }
+}
+```
+
+<Warning>
+The integrity checksum must be generated server-side to keep your secret key secure. Never expose your secret key in client-side code.
+</Warning>

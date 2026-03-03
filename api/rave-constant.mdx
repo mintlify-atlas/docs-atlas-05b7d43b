@@ -1,0 +1,76 @@
+---
+title: 'RaveConstant'
+description: 'Global configuration class for storing Flutterwave Rave API credentials and environment settings'
+---
+
+## Overview
+
+The `RaveConstant` class serves as the central configuration point for the Flutterwave Rave Java Library. It stores static fields for API credentials and environment settings that are used throughout the library.
+
+## Class Definition
+
+```java
+public class RaveConstant
+```
+
+## Public Fields
+
+<ParamField path="SECRET_KEY" type="String">
+  Your Flutterwave secret key used for server-side API authentication. This key should be kept confidential and never exposed in client-side code.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="PUBLIC_KEY" type="String">
+  Your Flutterwave public key used for client-side operations and initial API requests. This key can be safely exposed in frontend applications.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="ENVIRONMENT" type="Environment">
+  The current environment setting that determines whether API calls are made to the staging or live Flutterwave servers. Must be set to either `Environment.STAGING` or `Environment.LIVE`.
+  
+  **Access:** `public static`
+</ParamField>
+
+## Usage Example
+
+### Basic Configuration
+
+```java
+import com.github.theresasogunle.RaveConstant;
+import com.github.theresasogunle.Environment;
+
+// Configure for staging environment
+RaveConstant.PUBLIC_KEY = "FLWPUBK_TEST-xxxxxxxxxxxxx-X";
+RaveConstant.SECRET_KEY = "FLWSECK_TEST-xxxxxxxxxxxxx-X";
+RaveConstant.ENVIRONMENT = Environment.STAGING;
+```
+
+### Production Configuration
+
+```java
+import com.github.theresasogunle.RaveConstant;
+import com.github.theresasogunle.Environment;
+
+// Configure for live/production environment
+RaveConstant.PUBLIC_KEY = "FLWPUBK-xxxxxxxxxxxxx-X";
+RaveConstant.SECRET_KEY = "FLWSECK-xxxxxxxxxxxxx-X";
+RaveConstant.ENVIRONMENT = Environment.LIVE;
+```
+
+<Note>
+  **Important:** Always configure `RaveConstant` with your API credentials and environment before making any API calls. The library relies on these static fields for authentication and routing.
+</Note>
+
+## Best Practices
+
+- **Never hardcode credentials** in your source code. Use environment variables or secure configuration files.
+- **Keep SECRET_KEY secure** and never expose it in client-side code or version control.
+- **Use STAGING environment** for development and testing to avoid charges on real transactions.
+- **Validate credentials** are set before initializing any Rave services.
+
+## Related
+
+- [Environment](/api/environment) - Environment enum for configuration
+- [Endpoints](/api/endpoints) - API endpoint management

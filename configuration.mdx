@@ -1,0 +1,352 @@
+---
+title: Configuration
+description: Configure API keys, environment settings, and security for the Flutterwave Rave Java Library
+---
+
+## Overview
+
+Before you can use the Rave Java Library to process payments, you need to configure it with your Flutterwave API credentials and choose the appropriate environment. This guide covers all configuration options and best practices.
+
+## RaveConstant class
+
+The `RaveConstant` class is the central configuration point for the library. It holds three critical static properties that must be set before making any API calls:
+
+```java
+public class RaveConstant {
+    public static String SECRET_KEY;
+    public static String PUBLIC_KEY;
+    public static Environment ENVIRONMENT;
+}
+```
+
+## Required configuration
+
+You must configure these three properties at the start of your application:
+
+<Steps>
+  <Step title="Set your public key">
+    Your public key identifies your application to Flutterwave:
+    
+    ```java
+    RaveConstant.PUBLIC_KEY = "FLWPUBK-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-X";
+    ```
+  </Step>
+  
+  <Step title="Set your secret key">
+    Your secret key is used to encrypt sensitive payment data:
+    
+    ```java
+    RaveConstant.SECRET_KEY = "FLWSECK-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-X";
+    ```
+    
+    <Warning>
+      Never commit your secret key to version control or expose it in client-side code.
+    </Warning>
+  </Step>
+  
+  <Step title="Set the environment">
+    Choose between staging (testing) and live (production) environments:
+    
+    ```java
+    RaveConstant.ENVIRONMENT = Environment.STAGING;
+    ```
+  </Step>
+</Steps>
+
+## Environment enumeration
+
+The `Environment` enum defines two possible values:
+
+```java
+public enum Environment {
+    STAGING,
+    LIVE
+}
+```
+
+### STAGING environment
+
+Use the staging environment for development and testing:
+
+```java
+RaveConstant.ENVIRONMENT = Environment.STAGING;
+```
+
+<Info>
+  In staging mode:
+  - No real money is charged
+  - Test cards and accounts can be used
+  - API calls go to Flutterwave's test servers
+  - Use your test API keys from the test dashboard
+</Info>
+
+### LIVE environment
+
+Use the live environment for production:
+
+```java
+RaveConstant.ENVIRONMENT = Environment.LIVE;
+```
+
+<Warning>
+  In live mode:
+  - Real money is charged
+  - Only real cards and accounts work
+  - API calls go to Flutterwave's production servers
+  - Use your live API keys from the production dashboard
+</Warning>
+
+## Complete configuration example
+
+Here's a complete configuration example:
+
+```java Configuration.java
+import com.rave.RaveConstant;
+import com.rave.Environment;
+
+public class Configuration {
+    public static void configure() {
+        // Set public key
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-8ba286388b24dbd6c20706def0b4ea23-X";
+        
+        // Set secret key
+        RaveConstant.SECRET_KEY = "FLWSECK-c45e0f704619e673263844e584bba013-X";
+        
+        // Set environment
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+    }
+    
+    public static void main(String[] args) {
+        configure();
+        System.out.println("Rave configured successfully!");
+    }
+}
+```
+
+## Getting your API keys
+
+You need to obtain API keys from your Flutterwave dashboard:
+
+<Steps>
+  <Step title="Sign up for an account">
+    Create a Flutterwave account:
+    
+    - **Test account**: [http://rave.frontendpwc.com/](http://rave.frontendpwc.com/)
+    - **Live account**: [https://rave.flutterwave.com](https://rave.flutterwave.com)
+  </Step>
+  
+  <Step title="Access your dashboard">
+    Log in to your Flutterwave dashboard after account verification.
+  </Step>
+  
+  <Step title="Navigate to API settings">
+    Go to **Settings** > **API** in the dashboard menu.
+  </Step>
+  
+  <Step title="Copy your keys">
+    You'll find two sets of keys:
+    
+    - **Test keys**: For use with `Environment.STAGING`
+    - **Live keys**: For use with `Environment.LIVE`
+    
+    Copy both the public key and secret key.
+  </Step>
+</Steps>
+
+<Tip>
+  Keep your test and live keys separate. Consider using environment variables or configuration files to manage them.
+</Tip>
+
+## Security best practices
+
+Follow these best practices to keep your integration secure:
+
+### 1. Never expose your secret key
+
+```java
+// ❌ BAD: Hardcoding keys in source code
+RaveConstant.SECRET_KEY = "FLWSECK-c45e0f704619e673263844e584bba013-X";
+
+// ✅ GOOD: Loading from environment variables
+RaveConstant.SECRET_KEY = System.getenv("FLUTTERWAVE_SECRET_KEY");
+```
+
+### 2. Use environment variables
+
+Store your API keys in environment variables instead of hardcoding them:
+
+```java SecureConfiguration.java
+import com.rave.RaveConstant;
+import com.rave.Environment;
+
+public class SecureConfiguration {
+    public static void configure() {
+        // Load from environment variables
+        RaveConstant.PUBLIC_KEY = System.getenv("FLUTTERWAVE_PUBLIC_KEY");
+        RaveConstant.SECRET_KEY = System.getenv("FLUTTERWAVE_SECRET_KEY");
+        
+        // Determine environment from config
+        String env = System.getenv("FLUTTERWAVE_ENV");
+        RaveConstant.ENVIRONMENT = "LIVE".equals(env) 
+            ? Environment.LIVE 
+            : Environment.STAGING;
+    }
+}
+```
+
+### 3. Use configuration files
+
+Alternatively, use a properties file (excluded from version control):
+
+```properties config.properties
+flutterwave.public.key=FLWPUBK-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-X
+flutterwave.secret.key=FLWSECK-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-X
+flutterwave.environment=STAGING
+```
+
+```java ConfigLoader.java
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+import com.rave.RaveConstant;
+import com.rave.Environment;
+
+public class ConfigLoader {
+    public static void loadConfiguration(String configPath) throws IOException {
+        Properties props = new Properties();
+        props.load(new FileInputStream(configPath));
+        
+        RaveConstant.PUBLIC_KEY = props.getProperty("flutterwave.public.key");
+        RaveConstant.SECRET_KEY = props.getProperty("flutterwave.secret.key");
+        
+        String env = props.getProperty("flutterwave.environment");
+        RaveConstant.ENVIRONMENT = "LIVE".equalsIgnoreCase(env)
+            ? Environment.LIVE
+            : Environment.STAGING;
+    }
+}
+```
+
+<Warning>
+  Add `config.properties` to your `.gitignore` file to prevent accidentally committing your API keys to version control.
+</Warning>
+
+### 4. Validate configuration
+
+Always validate that configuration is complete before processing payments:
+
+```java ConfigValidator.java
+import com.rave.RaveConstant;
+
+public class ConfigValidator {
+    public static void validateConfiguration() throws IllegalStateException {
+        if (RaveConstant.PUBLIC_KEY == null || RaveConstant.PUBLIC_KEY.isEmpty()) {
+            throw new IllegalStateException("PUBLIC_KEY is not configured");
+        }
+        
+        if (RaveConstant.SECRET_KEY == null || RaveConstant.SECRET_KEY.isEmpty()) {
+            throw new IllegalStateException("SECRET_KEY is not configured");
+        }
+        
+        if (RaveConstant.ENVIRONMENT == null) {
+            throw new IllegalStateException("ENVIRONMENT is not configured");
+        }
+        
+        System.out.println("Configuration validated successfully");
+        System.out.println("Environment: " + RaveConstant.ENVIRONMENT);
+    }
+}
+```
+
+### 5. Separate test and production configurations
+
+```java EnvironmentConfig.java
+import com.rave.RaveConstant;
+import com.rave.Environment;
+
+public class EnvironmentConfig {
+    public static void configureStaging() {
+        RaveConstant.PUBLIC_KEY = System.getenv("FLUTTERWAVE_TEST_PUBLIC_KEY");
+        RaveConstant.SECRET_KEY = System.getenv("FLUTTERWAVE_TEST_SECRET_KEY");
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+    }
+    
+    public static void configureProduction() {
+        RaveConstant.PUBLIC_KEY = System.getenv("FLUTTERWAVE_LIVE_PUBLIC_KEY");
+        RaveConstant.SECRET_KEY = System.getenv("FLUTTERWAVE_LIVE_SECRET_KEY");
+        RaveConstant.ENVIRONMENT = Environment.LIVE;
+    }
+}
+```
+
+## Configuration checklist
+
+Before going live, verify your configuration:
+
+<Steps>
+  <Step title="Test environment works">
+    Verify that you can successfully process payments in staging mode with test keys.
+  </Step>
+  
+  <Step title="Live keys obtained">
+    Ensure you have valid live API keys from your production dashboard.
+  </Step>
+  
+  <Step title="Keys are secured">
+    Confirm that secret keys are stored in environment variables or secure configuration files, not in source code.
+  </Step>
+  
+  <Step title="Environment switching">
+    Verify that your application correctly switches between staging and live environments based on configuration.
+  </Step>
+  
+  <Step title="Error handling">
+    Test that your application handles missing or invalid configuration gracefully.
+  </Step>
+</Steps>
+
+<Note>
+  The library automatically handles encryption and API endpoints based on your environment setting. You don't need to configure these manually.
+</Note>
+
+## Common configuration issues
+
+### Issue: NullPointerException when making API calls
+
+**Cause**: Configuration was not set before making API calls.
+
+**Solution**: Ensure you set all three `RaveConstant` properties before creating any charge objects.
+
+### Issue: "Invalid key" errors
+
+**Cause**: Using test keys in live environment or vice versa.
+
+**Solution**: Verify that your keys match your environment setting:
+- Test keys with `Environment.STAGING`
+- Live keys with `Environment.LIVE`
+
+### Issue: API calls failing in production
+
+**Cause**: Environment is still set to `STAGING` in production.
+
+**Solution**: Ensure `RaveConstant.ENVIRONMENT = Environment.LIVE` is set when deploying to production.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Process your first payment with your configured credentials
+  </Card>
+  
+  <Card title="Card payments" icon="credit-card" href="/payments/card-payments">
+    Learn about all card payment options and methods
+  </Card>
+  
+  <Card title="Authentication" icon="shield" href="/installation">
+    Learn about authentication and API keys
+  </Card>
+  
+  <Card title="Error handling" icon="triangle-exclamation" href="/advanced/error-handling">
+    Handle configuration and API errors gracefully
+  </Card>
+</CardGroup>

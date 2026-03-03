@@ -1,0 +1,643 @@
+---
+title: "AlternativePayment"
+description: "Process alternative payment methods including Nigerian USSD, Ghana Mobile Money, and Kenya M-PESA"
+---
+
+## Overview
+
+The `AlternativePayment` class enables processing of alternative payment methods in the Flutterwave Rave Java Library. It supports:
+
+- **Nigerian USSD**: GTBank and Zenith Bank USSD payments
+- **Ghana Mobile Money**: Mobile money payments for Ghana
+- **Kenya M-PESA**: M-PESA mobile payments for Kenya
+
+## Constructor
+
+```java
+AlternativePayment altPayment = new AlternativePayment();
+```
+
+The `AlternativePayment` class uses a default constructor. Configure the payment by chaining setter methods to build your charge request.
+
+## Setter Methods
+
+All setter methods return the `AlternativePayment` instance, enabling method chaining for fluent API usage.
+
+### Account Information (USSD)
+
+<ParamField path="setAccountnumber" type="AlternativePayment">
+  ```java
+  public AlternativePayment setAccountnumber(String accountnumber)
+  ```
+  
+  Sets the account number for USSD payments.
+  
+  **Parameters:**
+  - `accountnumber` (String): Customer's bank account number
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setAccountnumber("0690000031");
+  ```
+</ParamField>
+
+<ParamField path="setAccountbank" type="AlternativePayment">
+  ```java
+  public AlternativePayment setAccountbank(String accountbank)
+  ```
+  
+  Sets the bank code for USSD payments.
+  
+  **Parameters:**
+  - `accountbank` (String): Bank code (e.g., "058" for GTBank)
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setAccountbank("058");
+  ```
+</ParamField>
+
+### Transaction Details
+
+<ParamField path="setAmount" type="AlternativePayment">
+  ```java
+  public AlternativePayment setAmount(String amount)
+  ```
+  
+  Sets the transaction amount.
+  
+  **Parameters:**
+  - `amount` (String): The charge amount
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setAmount("100");
+  ```
+</ParamField>
+
+<ParamField path="setCurrency" type="AlternativePayment">
+  ```java
+  public AlternativePayment setCurrency(String currency)
+  ```
+  
+  Sets the transaction currency.
+  
+  **Parameters:**
+  - `currency` (String): Three-letter currency code ("NGN" for Nigeria, "GHS" for Ghana, "KES" for Kenya)
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setCurrency("NGN");
+  ```
+</ParamField>
+
+<ParamField path="setCountry" type="AlternativePayment">
+  ```java
+  public AlternativePayment setCountry(String country)
+  ```
+  
+  Sets the country code for the transaction.
+  
+  **Parameters:**
+  - `country` (String): Two-letter country code ("NG", "GH", "KE")
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setCountry("NG");
+  ```
+</ParamField>
+
+<ParamField path="setTxRef" type="AlternativePayment">
+  ```java
+  public AlternativePayment setTxRef(String txRef)
+  ```
+  
+  Sets your unique transaction reference.
+  
+  **Parameters:**
+  - `txRef` (String): Unique transaction reference for tracking
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setTxRef("USSD-" + System.currentTimeMillis());
+  ```
+</ParamField>
+
+<ParamField path="setPin" type="AlternativePayment">
+  ```java
+  public AlternativePayment setPin(String pin)
+  ```
+  
+  Sets the PIN for the payment.
+  
+  **Parameters:**
+  - `pin` (String): Customer PIN
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setPin("3310");
+  ```
+</ParamField>
+
+### Customer Information
+
+<ParamField path="setEmail" type="AlternativePayment">
+  ```java
+  public AlternativePayment setEmail(String email)
+  ```
+  
+  Sets the customer's email address.
+  
+  **Parameters:**
+  - `email` (String): Customer email address
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setEmail("customer@example.com");
+  ```
+</ParamField>
+
+<ParamField path="setFirstname" type="AlternativePayment">
+  ```java
+  public AlternativePayment setFirstname(String firstname)
+  ```
+  
+  Sets the customer's first name.
+  
+  **Parameters:**
+  - `firstname` (String): Customer first name
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setFirstname("John");
+  ```
+</ParamField>
+
+<ParamField path="setLastname" type="AlternativePayment">
+  ```java
+  public AlternativePayment setLastname(String lastname)
+  ```
+  
+  Sets the customer's last name.
+  
+  **Parameters:**
+  - `lastname` (String): Customer last name
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setLastname("Doe");
+  ```
+</ParamField>
+
+<ParamField path="setPhonenumber" type="AlternativePayment">
+  ```java
+  public AlternativePayment setPhonenumber(String phonenumber)
+  ```
+  
+  Sets the customer's phone number (required for Ghana Mobile Money and Kenya M-PESA).
+  
+  **Parameters:**
+  - `phonenumber` (String): Customer phone number
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setPhonenumber("+233241234567");
+  ```
+</ParamField>
+
+### Security & Tracking
+
+<ParamField path="setIP" type="AlternativePayment">
+  ```java
+  public AlternativePayment setIP(String IP)
+  ```
+  
+  Sets the customer's IP address for fraud prevention.
+  
+  **Parameters:**
+  - `IP` (String): Customer IP address
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setIP("103.238.105.185");
+  ```
+</ParamField>
+
+### Mobile Money Specific
+
+<ParamField path="setOrderRef" type="AlternativePayment">
+  ```java
+  public AlternativePayment setOrderRef(String orderRef)
+  ```
+  
+  Sets the order reference (required for Ghana Mobile Money and Kenya M-PESA).
+  
+  **Parameters:**
+  - `orderRef` (String): Unique order reference
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setOrderRef("ORDER-" + System.currentTimeMillis());
+  ```
+</ParamField>
+
+<ParamField path="setNetwork" type="AlternativePayment">
+  ```java
+  public AlternativePayment setNetwork(String network)
+  ```
+  
+  Sets the mobile network (required for Ghana Mobile Money).
+  
+  **Parameters:**
+  - `network` (String): Mobile network code (e.g., "MTN", "VODAFONE", "TIGO")
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setNetwork("MTN");
+  ```
+</ParamField>
+
+<ParamField path="setFlwRef" type="AlternativePayment">
+  ```java
+  public AlternativePayment setFlwRef(String flwRef)
+  ```
+  
+  Sets the Flutterwave reference for transaction queries.
+  
+  **Parameters:**
+  - `flwRef` (String): Flutterwave transaction reference
+  
+  **Returns:** `AlternativePayment` instance for method chaining
+  
+  **Example:**
+  ```java
+  altPayment.setFlwRef("FLW-MOCK-1234567890");
+  ```
+</ParamField>
+
+## Payment Methods
+
+### chargeNigerianUssd()
+
+```java
+public JSONObject chargeNigerianUssd()
+```
+
+Processes USSD payments for Nigerian banks (GTBank and Zenith Bank). The payment type is automatically set to "ussd".
+
+<ParamField path="Return Value" type="JSONObject">
+  Returns a JSON response containing USSD code and payment instructions.
+  
+  **Required Fields:**
+  - Account number and bank code
+  - Amount, currency ("NGN"), country ("NG")
+  - Email, firstname, lastname
+  - Transaction reference
+  - PIN
+  - IP address
+</ParamField>
+
+**Example:**
+
+```java
+AlternativePayment altPayment = new AlternativePayment();
+
+JSONObject response = altPayment
+    .setAccountnumber("0690000031")
+    .setAccountbank("058") // GTBank
+    .setAmount("100")
+    .setCurrency("NGN")
+    .setCountry("NG")
+    .setEmail("customer@example.com")
+    .setFirstname("John")
+    .setLastname("Doe")
+    .setPin("3310")
+    .setTxRef("USSD-" + System.currentTimeMillis())
+    .setIP("103.238.105.185")
+    .chargeNigerianUssd();
+
+System.out.println("Response: " + response.toString());
+
+// Response contains USSD code for customer to dial
+if (response.getString("status").equals("success")) {
+    String ussdCode = response.getJSONObject("data").getString("paymentCode");
+    System.out.println("Please dial: " + ussdCode);
+}
+```
+
+### chargeGhanaMobileMoney()
+
+```java
+public JSONObject chargeGhanaMobileMoney()
+```
+
+Processes mobile money payments for Ghana. The payment type is automatically set to "mobilemoneygh" with `is_mobile_money_gh` flag set to "1".
+
+<ParamField path="Return Value" type="JSONObject">
+  Returns a JSON response with mobile money payment status and instructions.
+  
+  **Required Fields:**
+  - Order reference and network
+  - Amount, currency ("GHS"), country ("GH")
+  - Email, firstname, lastname
+  - Phone number
+  - Transaction reference
+  - PIN
+  - IP address
+</ParamField>
+
+**Example:**
+
+```java
+AlternativePayment altPayment = new AlternativePayment();
+
+JSONObject response = altPayment
+    .setOrderRef("ORDER-" + System.currentTimeMillis())
+    .setNetwork("MTN")
+    .setAmount("100")
+    .setCurrency("GHS")
+    .setCountry("GH")
+    .setEmail("customer@example.com")
+    .setFirstname("Kwame")
+    .setLastname("Mensah")
+    .setPhonenumber("233241234567")
+    .setPin("3310")
+    .setTxRef("MOMO-GH-" + System.currentTimeMillis())
+    .setIP("103.238.105.185")
+    .chargeGhanaMobileMoney();
+
+System.out.println("Response: " + response.toString());
+
+// Customer will receive prompt on their phone to approve payment
+if (response.getString("status").equals("success")) {
+    System.out.println("Payment initiated. Customer will receive mobile prompt.");
+}
+```
+
+### chargeKenyaMpesa()
+
+```java
+public JSONObject chargeKenyaMpesa()
+```
+
+Processes M-PESA payments for Kenya. The payment type is automatically set to "mpesa" with `is_mpesa` flag set to "1".
+
+<ParamField path="Return Value" type="JSONObject">
+  Returns a JSON response with M-PESA payment status and instructions.
+  
+  **Required Fields:**
+  - Order reference and phone number
+  - Amount, currency ("KES"), country ("KE")
+  - Email, firstname, lastname
+  - Transaction reference
+  - PIN
+  - IP address
+</ParamField>
+
+**Example:**
+
+```java
+AlternativePayment altPayment = new AlternativePayment();
+
+JSONObject response = altPayment
+    .setOrderRef("ORDER-" + System.currentTimeMillis())
+    .setAmount("100")
+    .setCurrency("KES")
+    .setCountry("KE")
+    .setEmail("customer@example.com")
+    .setFirstname("James")
+    .setLastname("Mwangi")
+    .setPhonenumber("254712345678")
+    .setPin("3310")
+    .setTxRef("MPESA-" + System.currentTimeMillis())
+    .setIP("103.238.105.185")
+    .chargeKenyaMpesa();
+
+System.out.println("Response: " + response.toString());
+
+// Customer will receive M-PESA prompt on their phone
+if (response.getString("status").equals("success")) {
+    System.out.println("M-PESA payment initiated. Customer will receive prompt.");
+}
+```
+
+## Complete Payment Examples
+
+### Nigerian USSD Payment Flow
+
+```java
+import com.github.theresasogunle.AlternativePayment;
+import org.json.JSONObject;
+
+public class UssdPayment {
+    public static void main(String[] args) {
+        AlternativePayment altPayment = new AlternativePayment();
+        
+        try {
+            // Initiate USSD charge
+            JSONObject response = altPayment
+                .setAccountnumber("0690000031")
+                .setAccountbank("058") // GTBank: 058, Zenith: 057
+                .setAmount("100")
+                .setCurrency("NGN")
+                .setCountry("NG")
+                .setEmail("customer@example.com")
+                .setFirstname("John")
+                .setLastname("Doe")
+                .setPin("3310")
+                .setTxRef("USSD-" + System.currentTimeMillis())
+                .setIP("103.238.105.185")
+                .chargeNigerianUssd();
+            
+            System.out.println("Response: " + response.toString());
+            
+            // Display USSD code to customer
+            if ("success".equals(response.getString("status"))) {
+                JSONObject data = response.getJSONObject("data");
+                String ussdCode = data.getString("paymentCode");
+                String flwRef = data.getString("flwRef");
+                
+                System.out.println("Please dial: " + ussdCode);
+                System.out.println("Transaction reference: " + flwRef);
+                System.out.println("Complete the payment on your phone.");
+            } else {
+                System.out.println("Payment initiation failed: " + response.getString("message"));
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Ghana Mobile Money Payment Flow
+
+```java
+import com.github.theresasogunle.AlternativePayment;
+import org.json.JSONObject;
+
+public class GhanaMomoPayment {
+    public static void main(String[] args) {
+        AlternativePayment altPayment = new AlternativePayment();
+        
+        try {
+            // Initiate Ghana Mobile Money charge
+            JSONObject response = altPayment
+                .setOrderRef("ORDER-" + System.currentTimeMillis())
+                .setNetwork("MTN") // MTN, VODAFONE, TIGO, etc.
+                .setAmount("100")
+                .setCurrency("GHS")
+                .setCountry("GH")
+                .setEmail("customer@example.com")
+                .setFirstname("Kwame")
+                .setLastname("Mensah")
+                .setPhonenumber("233241234567")
+                .setPin("3310")
+                .setTxRef("MOMO-GH-" + System.currentTimeMillis())
+                .setIP("103.238.105.185")
+                .chargeGhanaMobileMoney();
+            
+            System.out.println("Response: " + response.toString());
+            
+            if ("success".equals(response.getString("status"))) {
+                JSONObject data = response.getJSONObject("data");
+                String flwRef = data.getString("flwRef");
+                
+                System.out.println("Payment initiated successfully!");
+                System.out.println("Transaction reference: " + flwRef);
+                System.out.println("Customer will receive a prompt on their phone to approve payment.");
+            } else {
+                System.out.println("Payment failed: " + response.getString("message"));
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Kenya M-PESA Payment Flow
+
+```java
+import com.github.theresasogunle.AlternativePayment;
+import org.json.JSONObject;
+
+public class MpesaPayment {
+    public static void main(String[] args) {
+        AlternativePayment altPayment = new AlternativePayment();
+        
+        try {
+            // Initiate M-PESA charge
+            JSONObject response = altPayment
+                .setOrderRef("ORDER-" + System.currentTimeMillis())
+                .setAmount("100")
+                .setCurrency("KES")
+                .setCountry("KE")
+                .setEmail("customer@example.com")
+                .setFirstname("James")
+                .setLastname("Mwangi")
+                .setPhonenumber("254712345678")
+                .setPin("3310")
+                .setTxRef("MPESA-" + System.currentTimeMillis())
+                .setIP("103.238.105.185")
+                .chargeKenyaMpesa();
+            
+            System.out.println("Response: " + response.toString());
+            
+            if ("success".equals(response.getString("status"))) {
+                JSONObject data = response.getJSONObject("data");
+                String flwRef = data.getString("flwRef");
+                
+                System.out.println("M-PESA payment initiated!");
+                System.out.println("Transaction reference: " + flwRef);
+                System.out.println("Customer will receive M-PESA prompt to complete payment.");
+            } else {
+                System.out.println("Payment failed: " + response.getString("message"));
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+## Response Handling
+
+<ResponseField name="status" type="string">
+  The status of the charge (e.g., "success", "error")
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Description of the charge result
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains transaction details including:
+  - `flwRef`: Flutterwave transaction reference
+  - `paymentCode`: USSD code to dial (for USSD payments)
+  - `chargeResponseCode`: Response code from processor
+  - `chargeResponseMessage`: Message from processor
+  - `amount`: Transaction amount
+  - `currency`: Transaction currency
+</ResponseField>
+
+## Reference Information
+
+### Supported Nigerian Banks (USSD)
+
+- **GTBank**: Bank code `058`
+- **Zenith Bank**: Bank code `057`
+
+### Supported Ghana Mobile Networks
+
+- MTN
+- Vodafone
+- Tigo
+- AirtelTigo
+
+### Kenya M-PESA
+
+Works with all Safaricom M-PESA numbers.
+
+## Notes
+
+- All setter methods return the `AlternativePayment` instance for fluent chaining
+- Payment types are automatically set based on the charge method used
+- USSD payments return a code that customers dial on their phones
+- Mobile Money and M-PESA send prompts directly to customer phones
+- Always use the correct currency for each country (NGN, GHS, KES)
+- Phone numbers should include country codes for Mobile Money and M-PESA
+- Order references are required for Ghana Mobile Money and Kenya M-PESA
+- Use the transaction reference (flwRef) to query payment status
+- Customers complete payment on their mobile devices after initiation

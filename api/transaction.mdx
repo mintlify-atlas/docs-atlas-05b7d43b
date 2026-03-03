@@ -1,0 +1,172 @@
+---
+title: 'Transaction'
+description: 'Verify and requery transaction status'
+---
+
+## Overview
+
+The `Transaction` class provides methods to verify transaction status using Flutterwave's verification endpoints. It supports both standard verification and cross-verification (xrequery) to validate transaction outcomes.
+
+## Constructor
+
+```java
+Transaction transaction = new Transaction();
+```
+
+## Setter Methods
+
+The Transaction class uses method chaining for configuration. All setter methods return the `Transaction` instance.
+
+### setFlwref()
+
+Sets the Flutterwave reference for the transaction.
+
+<ParamField path="flwref" type="String" required>
+  The Flutterwave reference (flw_ref) assigned to the transaction
+</ParamField>
+
+```java
+transaction.setFlwref("FLW-MOCK-b615f9bb4e4e8e70f4f00df0f19d58d8");
+```
+
+**Returns:** `Transaction` - The current Transaction instance for method chaining
+
+### setTxRef()
+
+Sets the transaction reference.
+
+<ParamField path="txRef" type="String" required>
+  The unique transaction reference (txref) provided by the merchant
+</ParamField>
+
+```java
+transaction.setTxRef("MC-1234567890");
+```
+
+**Returns:** `Transaction` - The current Transaction instance for method chaining
+
+## Getter Methods
+
+### getFlwref()
+
+Retrieves the Flutterwave reference.
+
+```java
+String flwRef = transaction.getFlwref();
+```
+
+**Returns:** `String` - The Flutterwave reference
+
+### getTxRef()
+
+Retrieves the transaction reference.
+
+```java
+String txRef = transaction.getTxRef();
+```
+
+**Returns:** `String` - The transaction reference
+
+## Public Methods
+
+### verifyTransactionRequery()
+
+Verifies a transaction using the standard requery endpoint. This method is useful for verifying failed transactions or checking the current status of a transaction.
+
+```java
+public JSONObject verifyTransactionRequery()
+```
+
+**Returns:** `JSONObject` - The verification response containing transaction details
+
+**Example:**
+
+```java
+Transaction transaction = new Transaction();
+transaction.setTxRef("MC-1234567890")
+          .setFlwref("FLW-MOCK-b615f9bb4e4e8e70f4f00df0f19d58d8");
+
+JSONObject response = transaction.verifyTransactionRequery();
+
+if (response.getString("status").equals("success")) {
+    JSONObject data = response.getJSONObject("data");
+    String transactionStatus = data.getString("status");
+    System.out.println("Transaction Status: " + transactionStatus);
+}
+```
+
+<ResponseField name="status" type="String">
+  Status of the verification request
+</ResponseField>
+
+<ResponseField name="data" type="Object">
+  Transaction details including status, amount, and customer information
+</ResponseField>
+
+### verifyTransactionXrequery()
+
+Verifies a transaction using the cross-verification (xrequery) endpoint. This method provides additional verification options including filtering for only successful transactions and the last attempt.
+
+```java
+public JSONObject verifyTransactionXrequery()
+```
+
+**Returns:** `JSONObject` - The verification response with detailed transaction information
+
+**Example:**
+
+```java
+Transaction transaction = new Transaction();
+transaction.setTxRef("MC-1234567890");
+
+JSONObject response = transaction.verifyTransactionXrequery();
+
+if (response.getString("status").equals("success")) {
+    JSONObject data = response.getJSONObject("data");
+    String chargeResponseCode = data.getString("chargecode");
+    String amount = data.getString("amount");
+    System.out.println("Amount: " + amount);
+    System.out.println("Charge Response Code: " + chargeResponseCode);
+}
+```
+
+<ResponseField name="status" type="String">
+  Status of the xrequery request
+</ResponseField>
+
+<ResponseField name="data" type="Object">
+  Comprehensive transaction details with charge codes and transaction metadata
+</ResponseField>
+
+## Usage Example
+
+```java
+import com.github.theresasogunle.Transaction;
+import org.json.JSONObject;
+
+public class TransactionVerification {
+    public static void main(String[] args) {
+        // Create transaction instance
+        Transaction transaction = new Transaction();
+        
+        // Set transaction references
+        transaction.setTxRef("MC-1234567890")
+                  .setFlwref("FLW-MOCK-b615f9bb4e4e8e70f4f00df0f19d58d8");
+        
+        // Verify using standard requery
+        JSONObject requeryResponse = transaction.verifyTransactionRequery();
+        System.out.println("Requery Response: " + requeryResponse.toString());
+        
+        // Verify using xrequery for additional details
+        JSONObject xrequeryResponse = transaction.verifyTransactionXrequery();
+        System.out.println("Xrequery Response: " + xrequeryResponse.toString());
+    }
+}
+```
+
+## Notes
+
+- The secret key (`SECKEY`) is automatically retrieved from `RaveConstant.SECRET_KEY`
+- The xrequery method automatically sets `last_attempt=1` and `only_successful=1` parameters
+- Both methods return JSONObject responses that should be checked for success status before processing
+- Method chaining is supported for all setter methods

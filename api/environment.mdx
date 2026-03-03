@@ -1,0 +1,108 @@
+---
+title: 'Environment'
+description: 'Enum for specifying the Flutterwave API environment (staging or live)'
+---
+
+## Overview
+
+The `Environment` enum defines the available API environments for the Flutterwave Rave Java Library. It determines whether your application communicates with the staging (sandbox) or live (production) Flutterwave servers.
+
+## Enum Definition
+
+```java
+public enum Environment
+```
+
+## Enum Values
+
+<ParamField path="STAGING" type="Environment">
+  Represents the staging/sandbox environment for testing and development.
+  
+  - **Base URL:** `https://ravesandboxapi.flutterwave.com/`
+  - **Purpose:** Testing and development without real transactions
+  - **API Keys:** Use test keys (FLWPUBK_TEST and FLWSECK_TEST)
+  - **Transactions:** No real money is charged
+</ParamField>
+
+<ParamField path="LIVE" type="Environment">
+  Represents the live/production environment for real transactions.
+  
+  - **Base URL:** `https://api.ravepay.co/`
+  - **Purpose:** Production use with real transactions
+  - **API Keys:** Use live keys (FLWPUBK and FLWSECK)
+  - **Transactions:** Real money is processed
+</ParamField>
+
+## Usage Example
+
+### Setting Staging Environment
+
+```java
+import com.github.theresasogunle.RaveConstant;
+import com.github.theresasogunle.Environment;
+
+// Configure for staging/testing
+RaveConstant.PUBLIC_KEY = "FLWPUBK_TEST-xxxxxxxxxxxxx-X";
+RaveConstant.SECRET_KEY = "FLWSECK_TEST-xxxxxxxxxxxxx-X";
+RaveConstant.ENVIRONMENT = Environment.STAGING;
+```
+
+### Setting Live Environment
+
+```java
+import com.github.theresasogunle.RaveConstant;
+import com.github.theresasogunle.Environment;
+
+// Configure for production
+RaveConstant.PUBLIC_KEY = "FLWPUBK-xxxxxxxxxxxxx-X";
+RaveConstant.SECRET_KEY = "FLWSECK-xxxxxxxxxxxxx-X";
+RaveConstant.ENVIRONMENT = Environment.LIVE;
+```
+
+### Conditional Environment Setup
+
+```java
+import com.github.theresasogunle.RaveConstant;
+import com.github.theresasogunle.Environment;
+
+public class RaveConfig {
+    public static void configure(boolean isProduction) {
+        if (isProduction) {
+            RaveConstant.PUBLIC_KEY = System.getenv("RAVE_LIVE_PUBLIC_KEY");
+            RaveConstant.SECRET_KEY = System.getenv("RAVE_LIVE_SECRET_KEY");
+            RaveConstant.ENVIRONMENT = Environment.LIVE;
+        } else {
+            RaveConstant.PUBLIC_KEY = System.getenv("RAVE_TEST_PUBLIC_KEY");
+            RaveConstant.SECRET_KEY = System.getenv("RAVE_TEST_SECRET_KEY");
+            RaveConstant.ENVIRONMENT = Environment.STAGING;
+        }
+    }
+}
+```
+
+<Note>
+  The `Environment` enum value set in `RaveConstant.ENVIRONMENT` is used by the `Endpoints` class to automatically select the correct base URL for all API requests.
+</Note>
+
+## Environment Comparison
+
+| Feature | STAGING | LIVE |
+|---------|---------|------|
+| **Base URL** | ravesandboxapi.flutterwave.com | api.ravepay.co |
+| **Real Transactions** | No | Yes |
+| **API Keys** | Test keys | Live keys |
+| **Use Case** | Development & Testing | Production |
+| **Data Persistence** | May be reset periodically | Permanent |
+
+## Best Practices
+
+- **Always start with STAGING** when developing and testing new features
+- **Use environment variables** to manage which environment is active
+- **Never mix environments** - don't use staging keys with live environment or vice versa
+- **Test thoroughly in STAGING** before switching to LIVE
+- **Implement environment checks** in your code to prevent accidental production charges during development
+
+## Related
+
+- [RaveConstant](/api/rave-constant) - Global configuration class
+- [Endpoints](/api/endpoints) - API endpoint management that uses environment settings

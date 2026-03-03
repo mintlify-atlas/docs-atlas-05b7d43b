@@ -1,0 +1,556 @@
+---
+title: "AccountCharge"
+description: "Process direct bank account payments with support for Nigerian bank accounts"
+---
+
+## Overview
+
+The `AccountCharge` class enables direct bank account charging in the Flutterwave Rave Java Library. It supports charging Nigerian bank accounts directly, with OTP validation for secure transactions.
+
+## Constructor
+
+```java
+AccountCharge accountCharge = new AccountCharge();
+```
+
+The `AccountCharge` class uses a default constructor. Configure the payment by chaining setter methods to build your charge request.
+
+## Setter Methods
+
+All setter methods return the `AccountCharge` instance, enabling method chaining for fluent API usage.
+
+### Account Information
+
+<ParamField path="setAccountnumber" type="AccountCharge">
+  ```java
+  public AccountCharge setAccountnumber(String accountnumber)
+  ```
+  
+  Sets the customer's bank account number.
+  
+  **Parameters:**
+  - `accountnumber` (String): The bank account number to charge
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setAccountnumber("0690000031");
+  ```
+</ParamField>
+
+<ParamField path="setAccountbank" type="AccountCharge">
+  ```java
+  public AccountCharge setAccountbank(String accountbank)
+  ```
+  
+  Sets the bank code for the account.
+  
+  **Parameters:**
+  - `accountbank` (String): The bank code (e.g., "044" for Access Bank)
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setAccountbank("044");
+  ```
+</ParamField>
+
+<ParamField path="setPasscode" type="AccountCharge">
+  ```java
+  public AccountCharge setPasscode(String passcode)
+  ```
+  
+  Sets the account passcode for authentication.
+  
+  **Parameters:**
+  - `passcode` (String): Account authentication passcode
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setPasscode("09101989");
+  ```
+</ParamField>
+
+### Transaction Details
+
+<ParamField path="setAmount" type="AccountCharge">
+  ```java
+  public AccountCharge setAmount(String amount)
+  ```
+  
+  Sets the transaction amount.
+  
+  **Parameters:**
+  - `amount` (String): The charge amount
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setAmount("100");
+  ```
+</ParamField>
+
+<ParamField path="setCurrency" type="AccountCharge">
+  ```java
+  public AccountCharge setCurrency(String currency)
+  ```
+  
+  Sets the transaction currency.
+  
+  **Parameters:**
+  - `currency` (String): Three-letter currency code (e.g., "NGN")
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setCurrency("NGN");
+  ```
+</ParamField>
+
+<ParamField path="setCountry" type="AccountCharge">
+  ```java
+  public AccountCharge setCountry(String country)
+  ```
+  
+  Sets the country code for the transaction.
+  
+  **Parameters:**
+  - `country` (String): Two-letter country code (e.g., "NG")
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setCountry("NG");
+  ```
+</ParamField>
+
+<ParamField path="setTxRef" type="AccountCharge">
+  ```java
+  public AccountCharge setTxRef(String txRef)
+  ```
+  
+  Sets your unique transaction reference.
+  
+  **Parameters:**
+  - `txRef` (String): Unique transaction reference for tracking
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setTxRef("ACC-" + System.currentTimeMillis());
+  ```
+</ParamField>
+
+### Customer Information
+
+<ParamField path="setEmail" type="AccountCharge">
+  ```java
+  public AccountCharge setEmail(String email)
+  ```
+  
+  Sets the customer's email address.
+  
+  **Parameters:**
+  - `email` (String): Customer email address
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setEmail("customer@example.com");
+  ```
+</ParamField>
+
+<ParamField path="setFirstname" type="AccountCharge">
+  ```java
+  public AccountCharge setFirstname(String firstname)
+  ```
+  
+  Sets the customer's first name.
+  
+  **Parameters:**
+  - `firstname` (String): Customer first name
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setFirstname("John");
+  ```
+</ParamField>
+
+<ParamField path="setLastname" type="AccountCharge">
+  ```java
+  public AccountCharge setLastname(String lastname)
+  ```
+  
+  Sets the customer's last name.
+  
+  **Parameters:**
+  - `lastname` (String): Customer last name
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setLastname("Doe");
+  ```
+</ParamField>
+
+<ParamField path="setPhonenumber" type="AccountCharge">
+  ```java
+  public AccountCharge setPhonenumber(String phonenumber)
+  ```
+  
+  Sets the customer's phone number.
+  
+  **Parameters:**
+  - `phonenumber` (String): Customer phone number
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setPhonenumber("+2348012345678");
+  ```
+</ParamField>
+
+### Security & Tracking
+
+<ParamField path="setIP" type="AccountCharge">
+  ```java
+  public AccountCharge setIP(String IP)
+  ```
+  
+  Sets the customer's IP address for fraud prevention.
+  
+  **Parameters:**
+  - `IP` (String): Customer IP address
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setIP("103.238.105.185");
+  ```
+</ParamField>
+
+<ParamField path="setDevice_fingerprint" type="AccountCharge">
+  ```java
+  public AccountCharge setDevice_fingerprint(String device_fingerprint)
+  ```
+  
+  Sets the device fingerprint for enhanced security.
+  
+  **Parameters:**
+  - `device_fingerprint` (String): Unique device identifier
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setDevice_fingerprint("69e6b7f0b72037aa8428b70fbe03986c");
+  ```
+</ParamField>
+
+### Validation Parameters
+
+<ParamField path="setTransaction_reference" type="AccountCharge">
+  ```java
+  public AccountCharge setTransaction_reference(String transaction_reference)
+  ```
+  
+  Sets the Flutterwave transaction reference for validation.
+  
+  **Parameters:**
+  - `transaction_reference` (String): The flwRef returned from charge response
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setTransaction_reference("FLW-MOCK-0987654321");
+  ```
+</ParamField>
+
+<ParamField path="setOtp" type="AccountCharge">
+  ```java
+  public AccountCharge setOtp(String otp)
+  ```
+  
+  Sets the OTP for transaction validation.
+  
+  **Parameters:**
+  - `otp` (String): One-time password sent to customer
+  
+  **Returns:** `AccountCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  accountCharge.setOtp("12345");
+  ```
+</ParamField>
+
+## Charge Methods
+
+### chargeAccount()
+
+```java
+public JSONObject chargeAccount()
+```
+
+Charges a Nigerian bank account directly. The payment type is automatically set to "account".
+
+<ParamField path="Return Value" type="JSONObject">
+  Returns a JSON response containing the charge status and validation requirements.
+  
+  **Required Fields:**
+  - Account number and bank code
+  - Amount, currency, country
+  - Email, firstname, lastname
+  - Transaction reference
+  - Passcode
+  - IP address
+  - Device fingerprint
+</ParamField>
+
+**Example:**
+
+```java
+AccountCharge accountCharge = new AccountCharge();
+
+JSONObject response = accountCharge
+    .setAccountnumber("0690000031")
+    .setAccountbank("044")
+    .setAmount("100")
+    .setCurrency("NGN")
+    .setCountry("NG")
+    .setEmail("customer@example.com")
+    .setFirstname("John")
+    .setLastname("Doe")
+    .setPasscode("09101989")
+    .setTxRef("ACC-" + System.currentTimeMillis())
+    .setIP("103.238.105.185")
+    .setDevice_fingerprint("69e6b7f0b72037aa8428b70fbe03986c")
+    .chargeAccount();
+
+System.out.println(response.toString());
+```
+
+### chargeAccount(boolean polling)
+
+```java
+public JSONObject chargeAccount(boolean polling)
+```
+
+Charges a bank account with timeout handling via polling.
+
+<ParamField path="polling" type="boolean">
+  Enable polling for timeout scenarios
+</ParamField>
+
+<ParamField path="Return Value" type="JSONObject">
+  Returns a JSON response with charge status, handling network timeouts gracefully.
+</ParamField>
+
+**Example:**
+
+```java
+JSONObject response = accountCharge
+    .setAccountnumber("0690000031")
+    .setAccountbank("044")
+    // ... other fields ...
+    .chargeAccount(true);
+
+System.out.println(response.toString());
+```
+
+## Validation Methods
+
+### validateAccountCharge()
+
+```java
+public JSONObject validateAccountCharge()
+```
+
+Validates an account charge using OTP sent to the customer.
+
+<ParamField path="Return Value" type="JSONObject">
+  Returns validation result indicating success or failure.
+  
+  **Required Fields Before Calling:**
+  - Transaction reference (flwRef from charge response)
+  - OTP (from customer)
+</ParamField>
+
+**Example:**
+
+```java
+// After initial charge
+JSONObject chargeResponse = accountCharge.chargeAccount();
+String flwRef = chargeResponse.getJSONObject("data").getString("flwRef");
+
+// Customer receives OTP and provides it
+String otp = "12345"; // from customer input
+
+// Validate the charge
+JSONObject validationResponse = accountCharge
+    .setTransaction_reference(flwRef)
+    .setOtp(otp)
+    .validateAccountCharge();
+
+System.out.println(validationResponse.toString());
+```
+
+### validateAccountCharge(boolean polling)
+
+```java
+public JSONObject validateAccountCharge(boolean polling)
+```
+
+Validates an account charge with timeout handling.
+
+<ParamField path="polling" type="boolean">
+  Enable polling for timeout scenarios
+</ParamField>
+
+<ParamField path="Return Value" type="JSONObject">
+  Returns validation result with polling support.
+</ParamField>
+
+**Example:**
+
+```java
+JSONObject validationResponse = accountCharge
+    .setTransaction_reference(flwRef)
+    .setOtp(otp)
+    .validateAccountCharge(true);
+
+System.out.println(validationResponse.toString());
+```
+
+## Complete Payment Flow Example
+
+```java
+import com.github.theresasogunle.AccountCharge;
+import org.json.JSONObject;
+import java.util.Scanner;
+
+public class AccountPaymentFlow {
+    public static void main(String[] args) {
+        AccountCharge accountCharge = new AccountCharge();
+        Scanner scanner = new Scanner(System.in);
+        
+        try {
+            // Step 1: Initiate account charge
+            JSONObject chargeResponse = accountCharge
+                .setAccountnumber("0690000031")
+                .setAccountbank("044")
+                .setAmount("100")
+                .setCurrency("NGN")
+                .setCountry("NG")
+                .setEmail("customer@example.com")
+                .setFirstname("John")
+                .setLastname("Doe")
+                .setPasscode("09101989")
+                .setTxRef("ACC-" + System.currentTimeMillis())
+                .setIP("103.238.105.185")
+                .setDevice_fingerprint("69e6b7f0b72037aa8428b70fbe03986c")
+                .chargeAccount();
+            
+            System.out.println("Charge Response: " + chargeResponse.toString());
+            
+            // Step 2: Check if OTP is required
+            String status = chargeResponse.getString("status");
+            if ("success".equals(status)) {
+                JSONObject data = chargeResponse.getJSONObject("data");
+                String flwRef = data.getString("flwRef");
+                String chargeResponseCode = data.getString("chargeResponseCode");
+                
+                // "02" means OTP is required
+                if ("02".equals(chargeResponseCode)) {
+                    System.out.println("OTP sent to customer. Please enter OTP:");
+                    
+                    // Step 3: Get OTP from customer
+                    String otp = scanner.nextLine();
+                    
+                    // Step 4: Validate with OTP
+                    JSONObject validationResponse = accountCharge
+                        .setTransaction_reference(flwRef)
+                        .setOtp(otp)
+                        .validateAccountCharge();
+                    
+                    System.out.println("Validation Response: " + validationResponse.toString());
+                    
+                    // Step 5: Check final status
+                    String validationStatus = validationResponse.getString("status");
+                    if ("success".equals(validationStatus)) {
+                        System.out.println("Payment successful!");
+                    } else {
+                        System.out.println("Payment failed: " + validationResponse.getString("message"));
+                    }
+                }
+            } else {
+                System.out.println("Charge failed: " + chargeResponse.getString("message"));
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            scanner.close();
+        }
+    }
+}
+```
+
+## Response Handling
+
+<ResponseField name="status" type="string">
+  The status of the charge (e.g., "success", "error")
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Description of the charge result
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains transaction details including:
+  - `flwRef`: Flutterwave transaction reference
+  - `chargeResponseCode`: Response code ("02" indicates OTP required)
+  - `chargeResponseMessage`: Message from processor
+  - `amount`: Transaction amount
+  - `currency`: Transaction currency
+</ResponseField>
+
+## Bank Codes Reference
+
+Common Nigerian bank codes:
+
+- Access Bank: `044`
+- GTBank: `058`
+- Zenith Bank: `057`
+- First Bank: `011`
+- UBA: `033`
+- Wema Bank: `035`
+
+For a complete list of bank codes, refer to the Flutterwave documentation.
+
+## Notes
+
+- All setter methods return the `AccountCharge` instance for fluent chaining
+- The payment type is automatically set to "account"
+- Account charging is primarily supported for Nigerian banks
+- OTP validation is typically required for account charges
+- Always provide IP address and device fingerprint for enhanced security
+- The passcode is specific to the customer's bank account setup
+- Use polling variants for better timeout handling in production environments
+- Response code "02" indicates OTP is required for validation
+- Response code "00" indicates successful charge

@@ -1,0 +1,51 @@
+---
+title: 'Bank'
+description: 'Retrieve a list of all supported banks'
+---
+
+## Overview
+
+The `Bank` class provides methods to retrieve information about banks supported by Flutterwave. This is useful when you need to display a list of banks to users for bank transfer or account verification operations.
+
+## Class: Bank
+
+```java
+package com.github.theresasogunle;
+
+public class Bank
+```
+
+## Methods
+
+### getAllBanks()
+
+Retrieves a list of all banks supported by Flutterwave.
+
+```java
+public JsonNode getAllBanks()
+```
+
+**Returns:** `JsonNode` - A JSON object containing the list of all supported banks
+
+**Description:** This method makes a GET request to the Flutterwave API to fetch all available banks. The response includes bank names, bank codes, and other relevant information needed for bank-related transactions.
+
+#### Example
+
+```java
+Bank bank = new Bank();
+JsonNode banks = bank.getAllBanks();
+
+// Process the banks list
+System.out.println(banks.toString());
+```
+
+#### Response Structure
+
+The method returns a JsonNode containing:
+- Bank names
+- Bank codes
+- Additional metadata for each bank
+
+<Note>
+Make sure your API keys are properly configured in `RaveConstant` before calling this method.
+</Note>

@@ -1,80 +1,276 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quickstart
+description: Process your first card payment in under 5 minutes with the Flutterwave Rave Java Library
 ---
 
-## Get started in three steps
+## Process your first payment
 
-Get your documentation site running locally and make your first customization.
+This guide will walk you through creating your first card charge using the Rave Java Library. You'll learn how to configure the library, create a card charge, and execute the payment.
 
-### Step 1: Set up your local environment
+<Note>
+  This quickstart uses test credentials in the staging environment. No real money will be charged.
+</Note>
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
+## Before you begin
+
+Make sure you have:
+
+- [Installed the Rave Java Library](/installation)
+- Obtained your API keys from [Flutterwave test dashboard](http://rave.frontendpwc.com/)
+- A Java IDE set up and ready
+
+## Step-by-step guide
+
+<Steps>
+  <Step title="Configure RaveConstant">
+    First, set up your API credentials and environment. Add this configuration at the beginning of your application:
     
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
+    ```java
+    import com.rave.*;
+    import org.json.JSONObject;
     
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
+    public class Main {
+        public static void main(String[] args) throws Exception {
+            // Configure Rave with your API keys
+            RaveConstant.PUBLIC_KEY = "FLWPUBK-8ba286388b24dbd6c20706def0b4ea23-X";
+            RaveConstant.SECRET_KEY = "FLWSECK-c45e0f704619e673263844e584bba013-X";
+            RaveConstant.ENVIRONMENT = Environment.STAGING;
+            
+            // Your payment code will go here
+        }
+    }
+    ```
     
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+    <Warning>
+      Replace the test keys with your actual Flutterwave API keys. Never commit your secret key to version control.
+    </Warning>
+  </Step>
+  
+  <Step title="Create a CardCharge object">
+    Create a new `CardCharge` instance and set the card details using method chaining:
+    
+    ```java
+    CardCharge ch = new CardCharge();
+    
+    ch.setCardno("4187427415564246")
+        .setCvv("828")
+        .setAmount("3000")
+        .setExpiryyear("19")
+        .setExpirymonth("09")
+        .setEmail("flamekeed@gmail.com")
+        .setTxRef("MXX-ASC-4578")
+        .setSuggested_auth("PIN")
+        .setPin("3310");
+    ```
+    
+    <Info>
+      The `setTxRef()` should be a unique transaction reference for each payment. Use a UUID or timestamp-based reference in production.
+    </Info>
+  </Step>
+  
+  <Step title="Execute the charge">
+    Call the appropriate charge method based on the card type. For Mastercard and Verve cards:
+    
+    ```java
+    JSONObject charge = ch.chargeMasterAndVerveCard();
+    System.out.println(charge);
+    ```
+    
+    The response will contain the charge status and any required next steps (like OTP validation).
+  </Step>
+  
+  <Step title="Handle the response">
+    The charge method returns a JSON object with the transaction details. Check the response:
+    
+    ```java
+    JSONObject charge = ch.chargeMasterAndVerveCard();
+    
+    System.out.println("Status: " + charge.getString("status"));
+    System.out.println("Message: " + charge.getString("message"));
+    System.out.println("Transaction Reference: " + charge.getJSONObject("data").getString("flwRef"));
+    ```
+  </Step>
+</Steps>
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+## Complete example
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+Here's the complete code for a simple card charge:
 
-### Step 3: Go live
+```java Main.java
+import com.rave.*;
+import org.json.JSONObject;
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+public class Main {
+    public static void main(String[] args) throws Exception {
+        // Step 1: Configure RaveConstant
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-8ba286388b24dbd6c20706def0b4ea23-X";
+        RaveConstant.SECRET_KEY = "FLWSECK-c45e0f704619e673263844e584bba013-X";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        
+        // Step 2: Create CardCharge object
+        CardCharge ch = new CardCharge();
+        
+        // Step 3: Set card details
+        ch.setCardno("4187427415564246")
+            .setCvv("828")
+            .setAmount("3000")
+            .setExpiryyear("19")
+            .setExpirymonth("09")
+            .setEmail("flamekeed@gmail.com")
+            .setTxRef("MXX-ASC-4578")
+            .setSuggested_auth("PIN")
+            .setPin("3310");
+        
+        // Step 4: Execute charge
+        JSONObject charge = ch.chargeMasterAndVerveCard();
+        
+        // Step 5: Handle response
+        System.out.println(charge);
+    }
+}
+```
+
+## Advanced card charge example
+
+For a more complete implementation with additional fields:
+
+```java AdvancedCardCharge.java
+import com.rave.*;
+import org.json.JSONObject;
+
+public class AdvancedCardCharge {
+    public static void main(String[] args) throws Exception {
+        // Configure Rave
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        
+        CardCharge ch = new CardCharge();
+        
+        // Set comprehensive card details
+        ch.setCardno("4187427415564246")
+            .setCvv("828")
+            .setCurrency("NGN")
+            .setCountry("NG")
+            .setAmount("9000")
+            .setExpiryyear("19")
+            .setExpirymonth("09")
+            .setEmail("sogunledolapo@gmail.com")
+            .setIP("103.238.105.185")
+            .setTxRef("MXX-ASC-4578")
+            .setDevice_fingerprint("69e6b7f0sb72037aa8428b70fbe03986c");
+        
+        // For Mastercard and Verve cards
+        ch.setPin("3310")
+            .setSuggested_auth("PIN");
+        
+        JSONObject charge = ch.chargeMasterAndVerveCard();
+        System.out.println(charge);
+        
+        // If timeout occurs, use polling
+        JSONObject poll = ch.chargeMasterAndVerveCard(true);
+        System.out.println(poll);
+    }
+}
+```
+
+## Charging Visa and international cards
+
+Visa and international cards require a redirect URL instead of a PIN:
+
+```java VisaCardCharge.java
+import com.rave.*;
+import org.json.JSONObject;
+
+public class VisaCardCharge {
+    public static void main(String[] args) throws Exception {
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        
+        CardCharge ch = new CardCharge();
+        
+        ch.setCardno("4187427415564246")
+            .setCvv("828")
+            .setCurrency("NGN")
+            .setCountry("NG")
+            .setAmount("9000")
+            .setExpiryyear("19")
+            .setExpirymonth("09")
+            .setEmail("sogunledolapo@gmail.com")
+            .setIP("103.238.105.185")
+            .setTxRef("MXX-ASC-4578")
+            .setDevice_fingerprint("69e6b7f0sb72037aa8428b70fbe03986c")
+            .setRedirect_url("http://www.google.com");
+        
+        // Charge Visa and international cards
+        JSONObject chargeVisa = ch.chargeVisaAndIntl();
+        System.out.println(chargeVisa);
+        
+        // If timeout, poll
+        JSONObject pollVisa = ch.chargeVisaAndIntl(true);
+        System.out.println(pollVisa);
+    }
+}
+```
+
+<Tip>
+  The `setRedirect_url()` should point to a page on your website where the user will be redirected after completing 3D Secure authentication.
+</Tip>
+
+## Understanding the response
+
+A successful charge response looks like this:
+
+```json
+{
+  "status": "success",
+  "message": "Charge successful",
+  "data": {
+    "id": 1234567,
+    "txRef": "MXX-ASC-4578",
+    "flwRef": "FLW-MOCK-REFERENCE",
+    "orderRef": "URF_1234567_8901234",
+    "amount": 3000,
+    "charged_amount": 3000,
+    "currency": "NGN",
+    "chargeMessage": "Please enter the OTP sent to your mobile number 080****** and email te**@rave**.com",
+    "authModelUsed": "PIN",
+    "status": "success-pending-validation"
+  }
+}
+```
 
 ## Next steps
 
-Now that you have your docs running, explore these key features:
-
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Validate charges" icon="shield-check" href="/transactions/verify">
+    Learn how to validate OTP and complete the payment flow
+  </Card>
+  
+  <Card title="Account payments" icon="building-columns" href="/payments/account-payments">
+    Accept payments directly from bank accounts
+  </Card>
+  
+  <Card title="Configuration" icon="gear" href="/configuration">
+    Learn more about API keys and environment settings
+  </Card>
+  
+  <Card title="Error handling" icon="triangle-exclamation" href="/advanced/error-handling">
+    Handle common errors and edge cases
+  </Card>
 </CardGroup>
 
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+## Test cards
+
+Use these test cards in the staging environment:
+
+| Card Number | CVV | Expiry | PIN | Type |
+|-------------|-----|--------|-----|------|
+| 4187427415564246 | 828 | 09/19 | 3310 | Mastercard |
+| 5438898014560229 | 789 | 09/19 | 3310 | Mastercard |
+| 5531886652142950 | 564 | 09/19 | 3310 | Verve |
+
+<Warning>
+  Never use real card details in the staging environment. Always use the test cards provided by Flutterwave.
+</Warning>

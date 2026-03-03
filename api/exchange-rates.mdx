@@ -1,0 +1,178 @@
+---
+title: 'Exchange Rates'
+description: 'Get foreign exchange rates and convert between currencies'
+---
+
+## Overview
+
+The `ExchangeRates` class provides functionality to retrieve current foreign exchange rates and convert amounts between different currencies using Flutterwave's forex API.
+
+## Class: ExchangeRates
+
+```java
+package com.github.theresasogunle;
+
+public class ExchangeRates
+```
+
+## Methods
+
+### forex()
+
+Retrieves the exchange rate and converts an amount from one currency to another.
+
+```java
+public JSONObject forex()
+```
+
+**Returns:** `JSONObject` - Exchange rate information and converted amount
+
+**Description:** This method fetches the current exchange rate between two currencies and calculates the converted amount. It uses Flutterwave's forex endpoint to get real-time exchange rates.
+
+#### Parameters Required
+
+Before calling this method, set the following properties:
+
+<ParamField path="amount" type="String" required>
+  The amount to convert
+</ParamField>
+
+<ParamField path="origin_currency" type="String" required>
+  The source currency code (e.g., "USD", "NGN", "GHS")
+</ParamField>
+
+<ParamField path="destination_currency" type="String" required>
+  The target currency code to convert to
+</ParamField>
+
+#### Example
+
+```java
+ExchangeRates exchangeRates = new ExchangeRates();
+exchangeRates.setAmount("100")
+             .setOrigin_currency("USD")
+             .setDestination_currency("NGN");
+
+JSONObject result = exchangeRates.forex();
+System.out.println("Exchange rate result: " + result.toString());
+```
+
+#### Response Fields
+
+The response typically includes:
+
+<ResponseField name="status" type="String">
+  Status of the request (success/error)
+</ResponseField>
+
+<ResponseField name="data" type="Object">
+  Contains the exchange rate details
+</ResponseField>
+
+<ResponseField name="data.rate" type="Number">
+  The exchange rate between the two currencies
+</ResponseField>
+
+<ResponseField name="data.converted_amount" type="Number">
+  The converted amount in the destination currency
+</ResponseField>
+
+---
+
+## Setter Methods
+
+The `ExchangeRates` class uses a fluent interface pattern for easy configuration.
+
+### setAmount()
+
+Sets the amount to be converted.
+
+```java
+public ExchangeRates setAmount(String amount)
+```
+
+<ParamField path="amount" type="String" required>
+  The amount to convert as a string
+</ParamField>
+
+**Returns:** `ExchangeRates` - Returns the instance for method chaining
+
+---
+
+### setOrigin_currency()
+
+Sets the source currency.
+
+```java
+public ExchangeRates setOrigin_currency(String origin_currency)
+```
+
+<ParamField path="origin_currency" type="String" required>
+  The source currency code (e.g., "USD", "EUR", "GBP", "NGN")
+</ParamField>
+
+**Returns:** `ExchangeRates` - Returns the instance for method chaining
+
+---
+
+### setDestination_currency()
+
+Sets the destination currency.
+
+```java
+public ExchangeRates setDestination_currency(String destination_currency)
+```
+
+<ParamField path="destination_currency" type="String" required>
+  The destination currency code
+</ParamField>
+
+**Returns:** `ExchangeRates` - Returns the instance for method chaining
+
+---
+
+## Getter Methods
+
+### getAmount()
+
+Retrieves the currently set amount.
+
+```java
+public String getAmount()
+```
+
+**Returns:** `String` - The amount to convert
+
+---
+
+### getOrigin_currency()
+
+Retrieves the currently set origin currency.
+
+```java
+public String getOrigin_currency()
+```
+
+**Returns:** `String` - The source currency code
+
+---
+
+### getDestination_currency()
+
+Retrieves the currently set destination currency.
+
+```java
+public String getDestination_currency()
+```
+
+**Returns:** `String` - The destination currency code
+
+---
+
+<Note>
+This method requires your secret key to be configured in `RaveConstant.SECRET_KEY`.
+</Note>
+
+<Warning>
+Exchange rates are provided in real-time and may fluctuate. Always fetch fresh rates before processing currency conversions.
+</Warning>

@@ -1,0 +1,460 @@
+---
+title: 'Testing'
+description: 'Test your integration using staging environment and test credentials'
+---
+
+## Overview
+
+The Rave Java Library supports both staging and production environments. Always test your integration thoroughly in the staging environment before going live to ensure your payment flows work correctly without processing real transactions.
+
+## Environment Configuration
+
+The library uses the `Environment` enum to switch between staging and live modes:
+
+```java
+import com.github.theresasogunle.Environment;
+import com.github.theresasogunle.RaveConstant;
+
+// For testing - Staging environment
+RaveConstant.ENVIRONMENT = Environment.STAGING;
+
+// For production - Live environment
+RaveConstant.ENVIRONMENT = Environment.LIVE;
+```
+
+See Environment.java:12-15 and RaveConstant.java:6-12 for implementation details.
+
+<Warning>
+Never use production credentials in your test or development environments. Keep staging and live credentials separate.
+</Warning>
+
+## Getting Test Credentials
+
+<Steps>
+  <Step title="Sign up for a test account">
+    Create a test account on the Flutterwave staging platform:
+    
+    - Visit [http://rave.frontendpwc.com/](http://rave.frontendpwc.com/)
+    - Sign up for a free test account
+    - Complete the registration process
+  </Step>
+
+  <Step title="Retrieve your test API keys">
+    After logging in:
+    
+    - Navigate to Settings > API Keys
+    - Copy your test Public Key (starts with `FLWPUBK-`)
+    - Copy your test Secret Key (starts with `FLWSECK-`)
+  </Step>
+
+  <Step title="Configure your application">
+    Set the test credentials in your application:
+
+    ```java
+    RaveConstant.PUBLIC_KEY = "FLWPUBK-8ba286388b24dbd6c20706def0b4ea23-X";
+    RaveConstant.SECRET_KEY = "FLWSECK-c45e0f704619e673263844e584bba013-X";
+    RaveConstant.ENVIRONMENT = Environment.STAGING;
+    ```
+  </Step>
+</Steps>
+
+<Note>
+The example keys shown above are for demonstration purposes. Always use your own test keys from your Flutterwave staging account.
+</Note>
+
+## Setting Up Staging Environment
+
+Create a complete test configuration:
+
+```java
+import com.github.theresasogunle.*;
+import org.json.JSONObject;
+
+public class PaymentTestSetup {
+    
+    public static void configureStagingEnvironment() {
+        // Set staging credentials
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        
+        System.out.println("Staging environment configured");
+    }
+    
+    public static void main(String[] args) {
+        configureStagingEnvironment();
+        
+        // Now ready to test
+        testCardCharge();
+    }
+    
+    private static void testCardCharge() {
+        CardCharge ch = new CardCharge();
+        ch.setCardno("4187427415564246")
+          .setCvv("828")
+          .setAmount("1000")
+          .setExpiryyear("19")
+          .setExpirymonth("09")
+          .setEmail("test@example.com")
+          .setTxRef("TEST-" + System.currentTimeMillis())
+          .setSuggested_auth("PIN")
+          .setPin("3310");
+        
+        JSONObject response = ch.chargeMasterAndVerveCard();
+        
+        if (response != null) {
+            System.out.println("Test charge response: " + response.toString(2));
+        } else {
+            System.err.println("Test charge failed");
+        }
+    }
+}
+```
+
+## Test Cards
+
+Use these test cards in the staging environment:
+
+### Successful Test Cards
+
+| Card Type | Card Number | CVV | Expiry | PIN |
+|-----------|-------------|-----|--------|-----|
+| Mastercard | 5438898014560229 | 564 | 10/31 | 3310 |
+| Verve | 5061020000000000094 | 347 | 09/32 | 3310 |
+| Visa | 4187427415564246 | 828 | 09/32 | 3310 |
+| Mastercard | 5399838383838381 | 470 | 10/31 | 3310 |
+
+### Test Cards for Error Scenarios
+
+Test different error conditions:
+
+```java
+// Test insufficient funds
+ch.setCardno("4000000000000002");
+
+// Test invalid card number
+ch.setCardno("0000000000000000");
+
+// Test expired card
+ch.setCardno("4000000000000069");
+```
+
+<Tip>
+Use different test cards to verify your error handling logic works correctly for various failure scenarios.
+</Tip>
+
+## Test Implementation Example
+
+The library includes a live test implementation you can reference:
+
+- **Live Demo**: [https://rave-java.herokuapp.com/](https://rave-java.herokuapp.com/)
+- **Source Code**: [https://github.com/kingflamez/Rave-Java-Web-Implementation](https://github.com/kingflamez/Rave-Java-Web-Implementation)
+
+This web implementation demonstrates:
+- Complete payment flow
+- Card and account charges
+- OTP validation handling
+- Error handling patterns
+- Response processing
+
+## Testing Different Payment Methods
+
+### Testing Card Charges
+
+```java
+public class CardChargeTest {
+    
+    @Before
+    public void setup() {
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-test-xxx";
+        RaveConstant.SECRET_KEY = "FLWSECK-test-xxx";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+    }
+    
+    @Test
+    public void testMasterCardCharge() {
+        CardCharge ch = new CardCharge();
+        ch.setCardno("5438898014560229")
+          .setCvv("564")
+          .setAmount("1000")
+          .setExpiryyear("31")
+          .setExpirymonth("10")
+          .setEmail("test@example.com")
+          .setTxRef("TEST-MC-" + System.currentTimeMillis())
+          .setPin("3310")
+          .setSuggested_auth("PIN");
+        
+        JSONObject response = ch.chargeMasterAndVerveCard();
+        
+        assertNotNull("Response should not be null", response);
+        assertEquals("success", response.optString("status"));
+    }
+    
+    @Test
+    public void testVisaCharge() {
+        CardCharge ch = new CardCharge();
+        ch.setCardno("4187427415564246")
+          .setCvv("828")
+          .setAmount("2000")
+          .setExpiryyear("32")
+          .setExpirymonth("09")
+          .setEmail("test@example.com")
+          .setTxRef("TEST-VISA-" + System.currentTimeMillis())
+          .setRedirect_url("http://localhost:8080/callback");
+        
+        JSONObject response = ch.chargeVisaAndIntl();
+        
+        assertNotNull("Response should not be null", response);
+        // Visa charges may require redirect
+    }
+}
+```
+
+### Testing Account Charges
+
+```java
+public class AccountChargeTest {
+    
+    @Test
+    public void testAccountCharge() {
+        AccountCharge ch = new AccountCharge();
+        ch.setAccountnumber("0690000031")
+          .setAccountbank("044")
+          .setAmount("1000")
+          .setCountry("NG")
+          .setCurrency("NGN")
+          .setLastname("Test")
+          .setIP("1.3.4.4")
+          .setTxRef("TEST-ACC-" + System.currentTimeMillis())
+          .setEmail("test@example.com");
+        
+        JSONObject response = ch.chargeAccount();
+        
+        assertNotNull("Response should not be null", response);
+        
+        if (response.has("status")) {
+            String status = response.getString("status");
+            // May be success or require validation
+            assertTrue(
+                "Status should be success or pending",
+                status.equals("success") || status.equals("pending")
+            );
+        }
+    }
+}
+```
+
+## Testing with Polling
+
+Test timeout handling and polling functionality:
+
+```java
+@Test
+public void testChargeWithPolling() {
+    CardCharge ch = new CardCharge();
+    ch.setCardno("5438898014560229")
+      .setCvv("564")
+      .setAmount("1000")
+      .setExpiryyear("31")
+      .setExpirymonth("10")
+      .setEmail("test@example.com")
+      .setTxRef("TEST-POLL-" + System.currentTimeMillis())
+      .setPin("3310")
+      .setSuggested_auth("PIN");
+    
+    // Test with polling enabled
+    JSONObject response = ch.chargeMasterAndVerveCard(true);
+    
+    assertNotNull("Polling should return a response", response);
+}
+```
+
+## Testing OTP Validation
+
+Test the validation flow:
+
+```java
+@Test
+public void testOTPValidation() {
+    // First, create a charge that requires OTP
+    CardCharge ch = new CardCharge();
+    ch.setCardno("5438898014560229")
+      .setCvv("564")
+      .setAmount("1000")
+      .setExpiryyear("31")
+      .setExpirymonth("10")
+      .setEmail("test@example.com")
+      .setTxRef("TEST-OTP-" + System.currentTimeMillis())
+      .setPin("3310")
+      .setSuggested_auth("PIN");
+    
+    JSONObject chargeResponse = ch.chargeMasterAndVerveCard();
+    assertNotNull("Charge response should not be null", chargeResponse);
+    
+    // Get transaction reference from response
+    String txRef = chargeResponse.optString("flwRef");
+    assertNotNull("Transaction reference should be present", txRef);
+    
+    // Validate with OTP (use test OTP: 12345)
+    ch.setTransactionreference(txRef)
+      .setOtp("12345");
+    
+    JSONObject validationResponse = ch.validateCardCharge();
+    assertNotNull("Validation response should not be null", validationResponse);
+}
+```
+
+## Best Testing Practices
+
+### 1. Always Use Staging Environment
+
+```java
+// At the start of every test
+RaveConstant.ENVIRONMENT = Environment.STAGING;
+
+// Never do this in tests:
+// RaveConstant.ENVIRONMENT = Environment.LIVE; ❌
+```
+
+### 2. Use Unique Transaction References
+
+```java
+import java.util.UUID;
+
+// Generate unique txRef for each test
+String txRef = "TEST-" + System.currentTimeMillis() + "-" + UUID.randomUUID();
+ch.setTxRef(txRef);
+```
+
+### 3. Test Both Success and Failure Paths
+
+```java
+@Test
+public void testSuccessfulCharge() {
+    // Test with valid card
+    ch.setCardno("5438898014560229");
+    // ... assert success
+}
+
+@Test
+public void testInvalidCard() {
+    // Test with invalid card
+    ch.setCardno("0000000000000000");
+    JSONObject response = ch.chargeMasterAndVerveCard();
+    // ... assert error handling
+}
+```
+
+### 4. Clean Up Test Data
+
+```java
+@After
+public void tearDown() {
+    // Clean up any resources
+    // Log test results
+}
+```
+
+### 5. Test Network Error Scenarios
+
+```java
+@Test
+public void testNetworkTimeout() {
+    // Simulate network issues
+    CardCharge ch = new CardCharge();
+    // ... configure charge
+    
+    JSONObject response = ch.chargeMasterAndVerveCard();
+    
+    // Test null handling
+    if (response == null) {
+        // Test polling fallback
+        response = ch.chargeMasterAndVerveCard(true);
+    }
+}
+```
+
+### 6. Validate Response Structure
+
+```java
+@Test
+public void testResponseStructure() {
+    JSONObject response = ch.chargeMasterAndVerveCard();
+    
+    assertNotNull("Response should not be null", response);
+    assertTrue("Response should have status", response.has("status"));
+    assertTrue("Response should have message", response.has("message"));
+    
+    if (response.optString("status").equals("success")) {
+        assertTrue("Success response should have data", response.has("data"));
+    }
+}
+```
+
+## Going Live
+
+When you're ready to move to production:
+
+<Steps>
+  <Step title="Sign up for a live account">
+    Create a production account at [https://rave.flutterwave.com](https://rave.flutterwave.com)
+  </Step>
+
+  <Step title="Get live credentials">
+    Retrieve your production API keys from the live dashboard
+  </Step>
+
+  <Step title="Update configuration">
+    Switch to live environment:
+
+    ```java
+    RaveConstant.PUBLIC_KEY = "FLWPUBK-live-xxx";
+    RaveConstant.SECRET_KEY = "FLWSECK-live-xxx";
+    RaveConstant.ENVIRONMENT = Environment.LIVE;
+    ```
+  </Step>
+
+  <Step title="Use environment variables">
+    Store credentials securely:
+
+    ```java
+    // Read from environment variables
+    RaveConstant.PUBLIC_KEY = System.getenv("RAVE_PUBLIC_KEY");
+    RaveConstant.SECRET_KEY = System.getenv("RAVE_SECRET_KEY");
+    
+    // Determine environment from config
+    String env = System.getenv("RAVE_ENVIRONMENT");
+    RaveConstant.ENVIRONMENT = "live".equals(env) 
+        ? Environment.LIVE 
+        : Environment.STAGING;
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+Never hardcode production credentials in your source code. Use environment variables or secure configuration management.
+</Warning>
+
+## Continuous Testing
+
+Integrate payment testing into your CI/CD pipeline:
+
+```java
+// Configure via environment
+String publicKey = System.getenv("TEST_PUBLIC_KEY");
+String secretKey = System.getenv("TEST_SECRET_KEY");
+
+if (publicKey != null && secretKey != null) {
+    RaveConstant.PUBLIC_KEY = publicKey;
+    RaveConstant.SECRET_KEY = secretKey;
+    RaveConstant.ENVIRONMENT = Environment.STAGING;
+} else {
+    throw new IllegalStateException("Test credentials not configured");
+}
+```
+
+## Next Steps
+
+- Learn about [Error Handling](/advanced/error-handling) strategies
+- Implement [Polling](/advanced/polling) for reliability
+- Review [Configuration](/configuration) for secure API key management

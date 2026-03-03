@@ -1,0 +1,171 @@
+---
+title: Installation
+description: Install the Flutterwave Rave Java Library in your project using Maven or JAR file
+---
+
+## Prerequisites
+
+Before you begin, ensure you have:
+
+- Java Development Kit (JDK) 1.7 or higher installed
+- A Java IDE (NetBeans, IntelliJ IDEA, Eclipse, etc.)
+- Maven (if using Maven installation method)
+- A Flutterwave account with API keys
+
+<Info>
+  Don't have a Flutterwave account yet? Sign up for a [test account](http://rave.frontendpwc.com/) to get started with sandbox API keys.
+</Info>
+
+## Installation methods
+
+You can install the Rave Java Library using either Maven (recommended) or by manually adding the JAR file to your project.
+
+<CodeGroup>
+
+```xml Maven
+<dependency>
+  <groupId>com.github.theresasogunle</groupId>
+  <artifactId>Rave</artifactId>
+  <version>1.0.1</version>
+  <type>jar</type>
+</dependency>
+```
+
+```bash Download JAR
+# Download the latest JAR file from GitHub releases
+# Visit: https://github.com/theresasogunle/Rave-Java-Library/releases/latest
+```
+
+</CodeGroup>
+
+### Option 1: Maven installation (recommended)
+
+If you're using Maven for dependency management, add the following dependency to your `pom.xml` file:
+
+<Steps>
+  <Step title="Open your pom.xml">
+    Locate the `pom.xml` file in your project root directory.
+  </Step>
+  
+  <Step title="Add the dependency">
+    Add the Rave dependency to your `<dependencies>` section:
+    
+    ```xml
+    <dependency>
+      <groupId>com.github.theresasogunle</groupId>
+      <artifactId>Rave</artifactId>
+      <version>1.0.1</version>
+      <type>jar</type>
+    </dependency>
+    ```
+  </Step>
+  
+  <Step title="Update Maven dependencies">
+    Run `mvn clean install` in your terminal or use your IDE's Maven sync feature to download the library.
+  </Step>
+  
+  <Step title="Verify installation">
+    Check that the library appears in your project's dependencies. You should now be able to import classes from the `com.rave` package.
+  </Step>
+</Steps>
+
+<Tip>
+  You can also find the library on [Bintray](https://bintray.com/theresasogunle/Rave/Rave) for additional repository configuration options.
+</Tip>
+
+### Option 2: JAR file installation
+
+If you're not using Maven, you can manually add the JAR file to your project:
+
+<Steps>
+  <Step title="Download the JAR file">
+    Download the latest `Rave-Java-Library` JAR file from the [GitHub releases page](https://github.com/theresasogunle/Rave-Java-Library/releases/latest).
+  </Step>
+  
+  <Step title="Add JAR to your project">
+    Follow the instructions for your IDE below to add the JAR file to your project's classpath.
+  </Step>
+</Steps>
+
+## IDE setup instructions
+
+Once you have the JAR file, follow the instructions for your IDE:
+
+<CodeGroup>
+
+```text NetBeans IDE
+1. Right-click on your project in the Project Explorer
+2. Select "Properties" from the context menu
+3. Navigate to "Libraries" in the left panel
+4. Click on the "Compile" tab
+5. Click "Add JAR/Folder" button
+6. Browse and select the downloaded Rave JAR file
+7. Click "OK" to apply changes
+```
+
+```text IntelliJ IDEA
+1. Go to "File" > "Project Structure" in the menu
+2. Select "Modules" under "Project Settings"
+3. Click on the "Dependencies" tab
+4. Click the "+" (plus) sign at the bottom
+5. Select "JARs or directories"
+6. Navigate to and select the downloaded Rave JAR file
+7. Click "Apply" and "OK"
+```
+
+```text Eclipse IDE
+1. Right-click on your project in the Package Explorer
+2. Select "Build Path" > "Configure Build Path"
+3. Click on the "Libraries" tab
+4. Click "Add External JARs" button
+5. Browse and select the downloaded Rave JAR file
+6. Click "Apply" and "OK"
+```
+
+</CodeGroup>
+
+## Verify your installation
+
+To verify that the library is properly installed, create a simple test file:
+
+```java VerifyInstallation.java
+import com.rave.RaveConstant;
+import com.rave.Environment;
+
+public class VerifyInstallation {
+    public static void main(String[] args) {
+        // If this compiles without errors, the library is installed correctly
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        System.out.println("Rave Java Library is installed successfully!");
+    }
+}
+```
+
+If the code compiles and runs without errors, your installation is complete!
+
+<Warning>
+  If you encounter compilation errors, ensure that:
+  - The JAR file is properly added to your project's classpath
+  - You're using Java 1.7 or higher
+  - Your IDE has properly indexed the library
+</Warning>
+
+## Dependencies
+
+The Rave Java Library includes the following dependencies (automatically managed if using Maven):
+
+- Apache HttpClient for HTTP communication
+- JSON library for data parsing
+- SLF4J for logging
+
+These dependencies are bundled in the JAR file, so you don't need to install them separately.
+
+## Next steps
+
+<Card title="Configuration" icon="gear" href="/configuration">
+  Configure your API keys and environment settings
+</Card>
+
+<Card title="Quickstart" icon="rocket" href="/quickstart">
+  Process your first payment with a step-by-step guide
+</Card>

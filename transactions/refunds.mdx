@@ -1,0 +1,211 @@
+---
+title: 'Refunds'
+description: 'Process refunds for successful transactions'
+icon: 'rotate-left'
+---
+
+## Overview
+
+The Refund API allows you to initiate refunds for successful transactions processed through Flutterwave. Refunds are automatically processed back to the customer's original payment method.
+
+<Note>
+Refunds can only be initiated for transactions that were successfully completed. Pending or failed transactions cannot be refunded.
+</Note>
+
+## When to Issue Refunds
+
+Common scenarios for processing refunds:
+
+- **Customer requests** - Product returns or service cancellations
+- **Duplicate charges** - Accidental duplicate transactions
+- **Service issues** - Unable to fulfill the order
+- **Fraud prevention** - Suspicious transactions flagged after completion
+- **Quality issues** - Product defects or service quality complaints
+
+## The Refund Class
+
+The `Refund` class provides a simple interface for processing refunds.
+
+### refund()
+
+Initiates a refund for a successful transaction.
+
+**Method Signature:**
+```java
+public JSONObject refund()
+```
+
+**Parameters:**
+- `ref` - The Flutterwave reference (`flwRef`) from the original charge response
+
+**Returns:** `JSONObject` containing refund status and details
+
+## Setup
+
+<Steps>
+  <Step title="Configure API credentials">
+    Set up your Flutterwave API keys and environment:
+    
+    ```java
+    RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+    RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+    RaveConstant.ENVIRONMENT = Environment.STAGING; // or Environment.LIVE
+    ```
+  </Step>
+  
+  <Step title="Create Refund instance">
+    Initialize a new `Refund` object:
+    
+    ```java
+    Refund refund = new Refund();
+    ```
+  </Step>
+  
+  <Step title="Set transaction reference">
+    Set the Flutterwave reference of the transaction to refund:
+    
+    ```java
+    refund.setRef("FLW-MOCK-dcd2cd407f37649b04eb1342247e0bf6");
+    ```
+  </Step>
+  
+  <Step title="Process the refund">
+    Call the refund method:
+    
+    ```java
+    JSONObject response = refund.refund();
+    System.out.println(response);
+    ```
+  </Step>
+</Steps>
+
+## Complete Example
+
+```java
+import com.github.theresasogunle.Refund;
+import com.github.theresasogunle.RaveConstant;
+import com.github.theresasogunle.Environment;
+import org.json.JSONObject;
+
+public class ProcessRefund {
+    public static void main(String[] args) {
+        // Configure API credentials
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        
+        // Create refund instance
+        Refund rf = new Refund();
+        
+        // Set the transaction reference to refund
+        rf.setRef("FLW-MOCK-dcd2cd407f37649b04eb1342247e0bf6");
+        
+        // Process the refund
+        JSONObject response = rf.refund();
+        System.out.println(response);
+    }
+}
+```
+
+## Handling Refund Response
+
+The refund response contains status information about the refund request:
+
+```java
+JSONObject response = refund.refund();
+
+// Check refund status
+if (response.getString("status").equals("success")) {
+    // Refund initiated successfully
+    String message = response.getString("message");
+    JSONObject data = response.getJSONObject("data");
+    
+    System.out.println("Refund processed: " + message);
+    
+    // Update your database to reflect refund status
+    // Notify customer of refund
+} else {
+    // Refund failed
+    String errorMessage = response.getString("message");
+    System.err.println("Refund failed: " + errorMessage);
+}
+```
+
+<Warning>
+Always verify that the transaction was successful before attempting a refund. Attempting to refund a failed or pending transaction will result in an error.
+</Warning>
+
+## Refund Policies and Limitations
+
+### Processing Time
+
+- **Card refunds**: Typically processed within 3-7 business days
+- **Bank account refunds**: Usually within 1-3 business days
+- **Mobile money refunds**: Generally instant to 24 hours
+
+<Note>
+Actual refund timing depends on the customer's bank or financial institution.
+</Note>
+
+### Important Considerations
+
+1. **Full refunds only** - The API processes full transaction refunds. Partial refunds may require contacting Flutterwave support
+2. **Successful transactions only** - You can only refund completed, successful transactions
+3. **One-time refunds** - Each transaction can typically only be refunded once
+4. **Currency matching** - Refunds are processed in the original transaction currency
+5. **Fee handling** - Transaction fees may or may not be refunded based on your agreement with Flutterwave
+
+## Workflow Example
+
+Here's a complete workflow for handling customer refund requests:
+
+```java
+import com.github.theresasogunle.*;
+import org.json.JSONObject;
+
+public class RefundWorkflow {
+    
+    public static void processCustomerRefund(String flwRef) {
+        // Step 1: Verify the transaction is successful
+        Transaction transaction = new Transaction();
+        transaction.setFlwref(flwRef);
+        
+        JSONObject verifyResponse = transaction.verifyTransactionRequery();
+        String status = verifyResponse.getJSONObject("data").getString("status");
+        
+        if (!status.equals("successful")) {
+            System.err.println("Cannot refund: Transaction was not successful");
+            return;
+        }
+        
+        // Step 2: Process the refund
+        Refund refund = new Refund();
+        refund.setRef(flwRef);
+        
+        JSONObject refundResponse = refund.refund();
+        
+        // Step 3: Handle the response
+        if (refundResponse.getString("status").equals("success")) {
+            System.out.println("Refund initiated successfully");
+            // Update database, send customer notification
+        } else {
+            System.err.println("Refund failed: " + refundResponse.getString("message"));
+        }
+    }
+}
+```
+
+## Best Practices
+
+1. **Verify before refund** - Always verify the transaction was successful before processing a refund
+2. **Log all refunds** - Maintain detailed logs of refund requests and responses
+3. **Customer notification** - Inform customers when refunds are initiated and expected timelines
+4. **Database updates** - Update your order/transaction records to reflect refund status
+5. **Error handling** - Implement proper error handling for failed refund attempts
+6. **Reconciliation** - Regularly reconcile refunds with your settlement reports
+
+## Next Steps
+
+- Learn about [transaction verification](/transactions/verify)
+- Understand [fee calculations](/transactions/fees)
+- Explore [preauthorization](/payments/preauthorization)

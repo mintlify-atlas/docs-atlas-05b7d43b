@@ -1,0 +1,381 @@
+---
+title: 'Error Handling'
+description: 'Handle errors gracefully and implement robust error recovery strategies'
+---
+
+## Overview
+
+Proper error handling is essential for building reliable payment applications. The Rave Java Library returns JSON responses that include status information, error messages, and detailed error codes that help you diagnose and handle issues effectively.
+
+## Understanding Error Responses
+
+API calls in the Rave Java Library return `JSONObject` instances or `null` when requests fail. Always check for null responses and parse the status field to determine success or failure.
+
+<Note>
+The library catches exceptions internally (see ApiConnection.java:73-79, 94-96) and returns `null` when API calls fail, so null checking is essential.
+</Note>
+
+## Common Error Scenarios
+
+### Network and Connection Errors
+
+Network failures are handled by the `ApiConnection` class, which may return `null` when connections fail:
+
+```java
+CardCharge ch = new CardCharge();
+ch.setCardno("4187427415564246")
+  .setCvv("828")
+  .setAmount("1000")
+  .setEmail("user@example.com")
+  .setTxRef("TX-" + System.currentTimeMillis());
+
+try {
+    JSONObject response = ch.chargeMasterAndVerveCard();
+    
+    if (response == null) {
+        // Network error or API unavailable
+        System.err.println("Failed to connect to payment gateway");
+        // Implement retry logic or notify user
+        return;
+    }
+    
+    // Process successful response
+} catch (JSONException e) {
+    // Handle JSON parsing errors
+    System.err.println("Invalid response format: " + e.getMessage());
+}
+```
+
+### Invalid Configuration
+
+Missing or incorrect API credentials will cause authorization failures:
+
+```java
+// Check credentials are set before processing
+if (RaveConstant.PUBLIC_KEY == null || RaveConstant.SECRET_KEY == null) {
+    throw new IllegalStateException("API credentials not configured");
+}
+
+if (RaveConstant.ENVIRONMENT == null) {
+    throw new IllegalStateException("Environment not set");
+}
+
+// Now safe to proceed with charges
+CardCharge ch = new CardCharge();
+// ... configure charge
+```
+
+<Warning>
+Always set `RaveConstant.PUBLIC_KEY`, `RaveConstant.SECRET_KEY`, and `RaveConstant.ENVIRONMENT` before making any API calls.
+</Warning>
+
+### Insufficient Funds
+
+Customer accounts may have insufficient funds:
+
+```java
+JSONObject response = accountCharge.chargeAccount();
+
+if (response != null && response.has("status")) {
+    String status = response.getString("status");
+    String message = response.optString("message", "");
+    
+    if ("error".equals(status)) {
+        if (message.contains("insufficient") || message.contains("balance")) {
+            // Handle insufficient funds
+            System.out.println("Insufficient funds in account");
+        }
+    }
+}
+```
+
+### Invalid Card Details
+
+Incorrect card information will be rejected:
+
+```java
+JSONObject response = ch.chargeMasterAndVerveCard();
+
+if (response != null && response.has("status")) {
+    String status = response.getString("status");
+    String message = response.optString("message", "");
+    
+    if ("error".equals(status)) {
+        if (message.contains("invalid card") || message.contains("expired")) {
+            // Invalid card details
+            System.out.println("Card validation failed: " + message);
+        } else if (message.contains("cvv")) {
+            // CVV error
+            System.out.println("Invalid CVV");
+        }
+    }
+}
+```
+
+### OTP Validation Failures
+
+Incorrect OTP codes will fail validation:
+
+```java
+ch.setTransactionreference(transactionRef)
+  .setOtp(userProvidedOtp);
+
+JSONObject validation = ch.validateCardCharge();
+
+if (validation != null && validation.has("status")) {
+    String status = validation.getString("status");
+    
+    if ("error".equals(status)) {
+        String message = validation.optString("message", "");
+        
+        if (message.contains("otp") || message.contains("OTP")) {
+            // Invalid OTP
+            System.out.println("Incorrect OTP. Please try again.");
+            // Allow user to retry with new OTP
+        }
+    }
+}
+```
+
+## Comprehensive Error Handling Pattern
+
+Implement a robust error handling wrapper:
+
+<Steps>
+  <Step title="Create error handler utility">
+    ```java
+    public class PaymentErrorHandler {
+        
+        public static PaymentResult handleResponse(JSONObject response, String operation) {
+            // Check for null response (network/connection error)
+            if (response == null) {
+                return PaymentResult.error(
+                    "NETWORK_ERROR",
+                    "Unable to connect to payment gateway"
+                );
+            }
+            
+            // Parse response status
+            if (!response.has("status")) {
+                return PaymentResult.error(
+                    "INVALID_RESPONSE",
+                    "Malformed response from payment gateway"
+                );
+            }
+            
+            String status = response.getString("status");
+            String message = response.optString("message", "No message provided");
+            
+            if ("success".equals(status)) {
+                return PaymentResult.success(response);
+            } else if ("error".equals(status)) {
+                return categorizeError(message, response);
+            } else {
+                // Pending or other status
+                return PaymentResult.pending(response, message);
+            }
+        }
+        
+        private static PaymentResult categorizeError(String message, JSONObject response) {
+            String lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.contains("insufficient")) {
+                return PaymentResult.error("INSUFFICIENT_FUNDS", message);
+            } else if (lowerMessage.contains("invalid card") || lowerMessage.contains("expired")) {
+                return PaymentResult.error("INVALID_CARD", message);
+            } else if (lowerMessage.contains("otp")) {
+                return PaymentResult.error("INVALID_OTP", message);
+            } else if (lowerMessage.contains("timeout")) {
+                return PaymentResult.error("TIMEOUT", message);
+            } else {
+                return PaymentResult.error("UNKNOWN_ERROR", message);
+            }
+        }
+    }
+    ```
+  </Step>
+
+  <Step title="Use error handler in your code">
+    ```java
+    CardCharge ch = new CardCharge();
+    // ... configure charge
+    
+    JSONObject response = ch.chargeMasterAndVerveCard();
+    PaymentResult result = PaymentErrorHandler.handleResponse(response, "card_charge");
+    
+    switch (result.getType()) {
+        case SUCCESS:
+            // Process successful payment
+            break;
+        case INSUFFICIENT_FUNDS:
+            // Notify user about insufficient funds
+            break;
+        case INVALID_CARD:
+            // Ask user to check card details
+            break;
+        case NETWORK_ERROR:
+            // Retry or notify about connectivity issues
+            break;
+        default:
+            // Handle other errors
+            break;
+    }
+    ```
+  </Step>
+</Steps>
+
+## Retry Strategies
+
+### Simple Retry with Exponential Backoff
+
+```java
+public JSONObject chargeWithRetry(CardCharge charge, int maxRetries) {
+    int retries = 0;
+    int backoffMs = 1000; // Start with 1 second
+    
+    while (retries < maxRetries) {
+        JSONObject response = charge.chargeMasterAndVerveCard();
+        
+        if (response != null) {
+            return response; // Got a response, return it
+        }
+        
+        // Network error, retry with backoff
+        retries++;
+        if (retries < maxRetries) {
+            try {
+                Thread.sleep(backoffMs);
+                backoffMs *= 2; // Exponential backoff
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return null;
+            }
+        }
+    }
+    
+    return null; // All retries exhausted
+}
+```
+
+### Using Polling for Timeout Recovery
+
+```java
+JSONObject response = ch.chargeMasterAndVerveCard();
+
+if (response == null) {
+    // Try polling if initial request fails
+    System.out.println("Initial request failed, attempting to poll...");
+    response = ch.chargeMasterAndVerveCard(true);
+}
+
+if (response == null) {
+    // Even polling failed
+    System.err.println("Transaction could not be completed");
+}
+```
+
+<Tip>
+See the [Polling](/advanced/polling) documentation for detailed information on handling timeouts.
+</Tip>
+
+## Best Practices
+
+### 1. Always Check for Null
+
+```java
+JSONObject response = charge.chargeMasterAndVerveCard();
+
+if (response == null) {
+    // Handle null case first
+    return;
+}
+
+// Safe to proceed
+```
+
+### 2. Validate Response Structure
+
+```java
+if (response.has("status") && response.has("message")) {
+    // Response has expected fields
+} else {
+    // Unexpected response format
+    System.err.println("Unexpected response structure");
+}
+```
+
+### 3. Log Errors for Debugging
+
+```java
+if ("error".equals(status)) {
+    // Log full response for debugging
+    System.err.println("Payment error: " + response.toString(2));
+    
+    // Show user-friendly message to user
+    String userMessage = response.optString("message", "Payment failed");
+    System.out.println(userMessage);
+}
+```
+
+### 4. Handle JSONException
+
+```java
+try {
+    String status = response.getString("status");
+    // ... process response
+} catch (JSONException e) {
+    System.err.println("Error parsing response: " + e.getMessage());
+    // Handle malformed response
+}
+```
+
+### 5. Implement Idempotency
+
+```java
+// Use unique transaction references
+String txRef = "TX-" + System.currentTimeMillis() + "-" + UUID.randomUUID();
+ch.setTxRef(txRef);
+
+// Store txRef to check transaction status later if needed
+```
+
+### 6. Don't Expose Sensitive Details
+
+```java
+// DON'T do this
+System.out.println("Error: " + response.toString());
+
+// DO this instead
+String message = response.optString("message", "An error occurred");
+System.out.println("Payment failed: " + message);
+```
+
+## Testing Error Scenarios
+
+Use the staging environment to test error handling:
+
+```java
+// Configure for testing
+RaveConstant.ENVIRONMENT = Environment.STAGING;
+RaveConstant.PUBLIC_KEY = "FLWPUBK-xxxxx";
+RaveConstant.SECRET_KEY = "FLWSECK-xxxxx";
+
+// Test with invalid card
+ch.setCardno("0000000000000000"); // Will fail
+
+// Test with insufficient funds test card
+ch.setCardno("4000000000000002"); // Insufficient funds
+
+// Test network timeout
+// (disconnect network during charge)
+```
+
+<Note>
+Check the [Testing](/advanced/testing) guide for more information on test cards and staging environment setup.
+</Note>
+
+## Next Steps
+
+- Learn about [Polling](/advanced/polling) for timeout handling
+- Set up [Testing Environment](/advanced/testing)
+- Review [Transaction Verification](/transactions/verify)

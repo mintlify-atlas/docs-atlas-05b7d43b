@@ -1,0 +1,171 @@
+---
+title: 'Polling for Transaction Status'
+description: 'Handle timeout scenarios and poll for transaction completion'
+---
+
+## Overview
+
+When processing payments, network issues or slow responses can cause timeouts. The Rave Java Library provides polling functionality to handle these scenarios gracefully and retrieve transaction status after a timeout occurs.
+
+## Understanding Polling
+
+Polling allows you to retry a charge request or validation when the initial request times out. Instead of failing immediately, the library can automatically poll the Flutterwave API to check if the transaction completed successfully.
+
+<Note>
+Polling is particularly useful in environments with unstable network connections or when processing high-value transactions where reliability is critical.
+</Note>
+
+## How Polling Works
+
+The library provides polling support through the `Polling` class, which includes three key methods:
+
+- `handleTimeoutCharge()` - Retries a charge request after timeout
+- `validateCardChargeTimeout()` - Validates card charges with polling
+- `validateAccountChargeTimeout()` - Validates account charges with polling
+
+## Using Polling with Card Charges
+
+<Steps>
+  <Step title="Enable polling with boolean parameter">
+    Pass `true` as a boolean parameter to enable polling on charge methods:
+
+    ```java
+    CardCharge ch = new CardCharge();
+    ch.setCardno("4187427415564246")
+      .setCvv("828")
+      .setAmount("9000")
+      .setExpiryyear("19")
+      .setExpirymonth("09")
+      .setEmail("user@example.com")
+      .setTxRef("MXX-ASC-4578")
+      .setPin("3310")
+      .setSuggested_auth("PIN");
+
+    // Enable polling for timeout handling
+    JSONObject poll = ch.chargeMasterAndVerveCard(true);
+    ```
+    
+    See CardCharge.java:87-96 for implementation details.
+  </Step>
+
+  <Step title="Poll for validation">
+    If the charge requires validation, you can also poll during the validation step:
+
+    ```java
+    ch.setTransactionreference("ACHG-1520028650995")
+      .setOtp("12345");
+
+    // Validate with polling enabled
+    JSONObject validate = ch.validateCardCharge(true);
+    ```
+  </Step>
+</Steps>
+
+## Using Polling with Account Charges
+
+Account charges support the same polling pattern:
+
+```java
+AccountCharge ch = new AccountCharge();
+ch.setAccountnumber("0690000031")
+  .setAccountbank("044")
+  .setAmount("1000")
+  .setCountry("NG")
+  .setCurrency("NGN")
+  .setEmail("user@example.com")
+  .setTxRef("MX-678DH");
+
+// Charge with polling enabled
+JSONObject poll = ch.chargeAccount(true);
+
+// Validate with polling
+ch.setTransaction_reference("ACHG-1520028650995")
+  .setOtp("12345");
+JSONObject val = ch.validateAccountCharge(true);
+```
+
+See AccountCharge.java:78-86 and AccountCharge.java:95-98 for implementation.
+
+## Using Polling with Visa and International Cards
+
+Visa and international cards that require 3D Secure authentication also support polling:
+
+```java
+CardCharge ch = new CardCharge();
+ch.setCardno("4187427415564246")
+  .setCvv("828")
+  .setAmount("9000")
+  .setExpiryyear("19")
+  .setExpirymonth("09")
+  .setEmail("user@example.com")
+  .setTxRef("MXX-ASC-4578")
+  .setRedirect_url("https://your-site.com/callback");
+
+// Charge Visa/International with polling
+JSONObject pollvisa = ch.chargeVisaAndIntl(true);
+```
+
+## When to Use Polling
+
+<Tip>
+Enable polling in these scenarios:
+
+- **Unreliable networks** - When operating in environments with intermittent connectivity
+- **High-value transactions** - When you cannot afford to lose transaction status
+- **Production systems** - To improve reliability and reduce manual intervention
+- **Background processing** - When charges are processed asynchronously
+</Tip>
+
+<Warning>
+Polling adds additional API calls and latency. Only use it when necessary, and always implement proper timeout limits to avoid infinite polling loops.
+</Warning>
+
+## Regular vs Polling Approach
+
+Here's how the two approaches compare:
+
+**Without Polling:**
+```java
+// May fail immediately on timeout
+JSONObject charge = ch.chargeMasterAndVerveCard();
+```
+
+**With Polling:**
+```java
+// Automatically retries on timeout
+JSONObject poll = ch.chargeMasterAndVerveCard(true);
+```
+
+## Best Practices
+
+1. **Use selectively** - Enable polling only for critical transactions
+2. **Monitor responses** - Always check the response status even with polling
+3. **Implement timeouts** - Set reasonable timeout limits in your application
+4. **Log polling attempts** - Track how often polling is triggered to identify network issues
+5. **Handle all outcomes** - Plan for success, timeout, and failure scenarios
+
+## Response Handling
+
+Whether using polling or not, always check the response:
+
+```java
+JSONObject response = ch.chargeMasterAndVerveCard(true);
+
+if (response != null) {
+    String status = response.getString("status");
+    
+    if ("success".equals(status)) {
+        // Transaction successful
+    } else {
+        // Handle error or pending state
+    }
+} else {
+    // Polling also timed out
+}
+```
+
+## Next Steps
+
+- Learn about [Error Handling](/advanced/error-handling) strategies
+- Set up [Testing](/advanced/testing) with staging environment
+- Review [Card Charges](/payments/card-payments) documentation

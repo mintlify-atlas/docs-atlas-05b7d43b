@@ -1,0 +1,327 @@
+---
+title: 'Account Payments'
+description: 'Accept payments directly from customer bank accounts'
+icon: 'building-columns'
+---
+
+The `AccountCharge` class enables direct bank account payments in Nigeria. This payment method requires customers to provide their account details and validate the transaction with an OTP.
+
+## Overview
+
+Account payments follow a two-step flow:
+
+1. **Charge**: Initiate the payment with account details
+2. **Validate**: Complete the payment with OTP verification
+
+## Configuration
+
+First, configure your Rave credentials:
+
+```java
+RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+RaveConstant.ENVIRONMENT = Environment.STAGING; // or Environment.LIVE
+```
+
+## Account Charge Parameters
+
+<ParamField path="accountnumber" type="string" required>
+  Customer's bank account number
+</ParamField>
+
+<ParamField path="accountbank" type="string" required>
+  Bank short code (e.g., "044" for Access Bank)
+</ParamField>
+
+<ParamField path="amount" type="string" required>
+  Transaction amount
+</ParamField>
+
+<ParamField path="email" type="string" required>
+  Customer's email address
+</ParamField>
+
+<ParamField path="txRef" type="string" required>
+  Your unique transaction reference
+</ParamField>
+
+<ParamField path="firstname" type="string" required>
+  Customer's first name
+</ParamField>
+
+<ParamField path="lastname" type="string" required>
+  Customer's last name
+</ParamField>
+
+<ParamField path="IP" type="string" required>
+  Customer's IP address
+</ParamField>
+
+<ParamField path="currency" type="string" default="NGN">
+  Currency code (defaults to NGN)
+</ParamField>
+
+<ParamField path="country" type="string" default="NG">
+  Country code (defaults to NG)
+</ParamField>
+
+<ParamField path="phonenumber" type="string">
+  Customer's phone number (optional)
+</ParamField>
+
+<ParamField path="passcode" type="string">
+  Account passcode (optional)
+</ParamField>
+
+<ParamField path="device_fingerprint" type="string">
+  Device fingerprint for fraud detection (optional)
+</ParamField>
+
+## Charging a Bank Account
+
+<Steps>
+  <Step title="Create Account Charge">
+    Initialize an `AccountCharge` object and set the required parameters:
+    
+    ```java
+    AccountCharge ch = new AccountCharge();
+    ch.setAccountnumber("0690000031")
+        .setAccountbank("044")
+        .setAmount("1000")
+        .setCountry("NG")
+        .setCurrency("NGN")
+        .setLastname("Theresa")
+        .setFirstname("Sogunle")
+        .setIP("1.3.4.4")
+        .setPayment_type("account")
+        .setTxRef("MX-678DH")
+        .setEmail("customer@example.com");
+    ```
+  </Step>
+  
+  <Step title="Initiate Charge">
+    Call the `chargeAccount()` method to initiate the payment:
+    
+    ```java
+    JSONObject result = ch.chargeAccount();
+    System.out.println(result);
+    ```
+    
+    The response will contain a `flwRef` (transaction reference) that you'll need for validation.
+  </Step>
+  
+  <Step title="Receive OTP">
+    The customer will receive an OTP via SMS or email to authorize the transaction.
+  </Step>
+  
+  <Step title="Validate with OTP">
+    Complete the payment by validating with the OTP:
+    
+    ```java
+    ch.setTransaction_reference("ACHG-1520028650995")
+        .setOtp("12345");
+    
+    JSONObject val = ch.validateAccountCharge();
+    System.out.println(val);
+    ```
+  </Step>
+</Steps>
+
+## Complete Example
+
+```java
+import com.github.theresasogunle.*;
+import org.json.JSONObject;
+
+public class AccountPaymentExample {
+    public static void main(String[] args) {
+        // Configure Rave
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        
+        // Create account charge
+        AccountCharge ch = new AccountCharge();
+        ch.setAccountnumber("0690000031")
+            .setAccountbank("044")
+            .setAmount("1000")
+            .setCountry("NG")
+            .setCurrency("NGN")
+            .setLastname("Theresa")
+            .setFirstname("Sogunle")
+            .setIP("1.3.4.4")
+            .setTxRef("MX-678DH")
+            .setEmail("customer@example.com");
+        
+        // Charge account
+        JSONObject result = ch.chargeAccount();
+        System.out.println("Charge Response: " + result);
+        
+        // Extract transaction reference from response
+        String flwRef = result.getJSONObject("data").getString("flwRef");
+        
+        // Validate with OTP (after customer receives it)
+        ch.setTransaction_reference(flwRef)
+            .setOtp("12345");
+        
+        JSONObject validation = ch.validateAccountCharge();
+        System.out.println("Validation Response: " + validation);
+        
+        // Check payment status
+        if (validation.getString("status").equals("success")) {
+            System.out.println("Payment completed successfully!");
+        }
+    }
+}
+```
+
+## Polling Support
+
+Both the charge and validation methods support polling for handling timeout scenarios.
+
+### Charge with Polling
+
+If the initial charge request times out, use polling:
+
+```java
+JSONObject poll = ch.chargeAccount(true);
+```
+
+<Note>
+  Setting the polling parameter to `true` enables automatic retry logic for timeout scenarios.
+</Note>
+
+### Validation with Polling
+
+Similarly, you can poll during validation:
+
+```java
+JSONObject val = ch.validateAccountCharge(true);
+```
+
+## Bank Codes
+
+Common Nigerian bank codes:
+
+| Bank Name | Bank Code |
+|-----------|----------|
+| Access Bank | 044 |
+| GTBank | 058 |
+| Zenith Bank | 057 |
+| First Bank | 011 |
+| UBA | 033 |
+| Fidelity Bank | 070 |
+| FCMB | 214 |
+| Stanbic IBTC | 221 |
+| Sterling Bank | 232 |
+| Union Bank | 032 |
+
+<Warning>
+  Always ensure you're using the correct bank code for the customer's bank. Incorrect codes will cause the transaction to fail.
+</Warning>
+
+## Payment Type
+
+The payment type is automatically set to `"account"` by the `setJSON()` method in the `AccountCharge` class. You don't need to set this manually.
+
+## Response Handling
+
+### Charge Response
+
+The `chargeAccount()` method returns a JSON object with the following structure:
+
+```json
+{
+  "status": "success",
+  "message": "AUTH_SUGGESTION",
+  "data": {
+    "flwRef": "ACHG-1520028650995",
+    "authModelUsed": "AUTH",
+    "authurl": "",
+    ...
+  }
+}
+```
+
+### Validation Response
+
+The `validateAccountCharge()` method returns:
+
+```json
+{
+  "status": "success",
+  "message": "Charge Complete",
+  "data": {
+    "txRef": "MX-678DH",
+    "flwRef": "ACHG-1520028650995",
+    "amount": 1000,
+    "currency": "NGN",
+    "chargedAmount": 1000,
+    ...
+  }
+}
+```
+
+## Method Reference
+
+| Method | Parameters | Returns | Description |
+|--------|-----------|---------|-------------|
+| `chargeAccount()` | - | `JSONObject` | Initiates account charge |
+| `chargeAccount(boolean polling)` | `polling` | `JSONObject` | Initiates charge with polling support |
+| `validateAccountCharge()` | - | `JSONObject` | Validates charge with OTP |
+| `validateAccountCharge(boolean polling)` | `polling` | `JSONObject` | Validates with polling support |
+
+## Best Practices
+
+<Tabs>
+  <Tab title="Security">
+    - Never store sensitive account details
+    - Always use HTTPS for API calls
+    - Validate transaction amounts before processing
+    - Implement proper error handling
+  </Tab>
+  
+  <Tab title="User Experience">
+    - Display clear instructions for OTP entry
+    - Show estimated processing time
+    - Provide transaction status updates
+    - Handle timeout scenarios gracefully
+  </Tab>
+  
+  <Tab title="Error Handling">
+    - Check response status codes
+    - Implement retry logic for timeouts
+    - Log failed transactions for debugging
+    - Provide helpful error messages to users
+  </Tab>
+</Tabs>
+
+## Troubleshooting
+
+### Common Issues
+
+**Invalid Bank Code**
+- Ensure you're using the correct 3-digit bank code
+- Verify the bank code matches the account number
+
+**OTP Not Received**
+- Verify the customer's email and phone number are correct
+- Check if the bank account is active and valid
+- Wait a few minutes and retry
+
+**Validation Failed**
+- Ensure the OTP is entered correctly
+- Check that the transaction reference matches
+- Verify the OTP hasn't expired
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Card Payments" icon="credit-card" href="/payments/card-payments">
+    Accept credit and debit card payments
+  </Card>
+  
+  <Card title="Alternative Payments" icon="mobile" href="/payments/alternative-payments">
+    Support USSD, mobile money, and M-Pesa
+  </Card>
+</CardGroup>

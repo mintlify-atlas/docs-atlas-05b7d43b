@@ -1,0 +1,212 @@
+---
+title: 'Encryption'
+description: 'Encrypt payment data for secure transmission to Flutterwave'
+---
+
+## Overview
+
+The `Encryption` class provides methods to securely encrypt payment parameters before sending them to Flutterwave's API. This ensures that sensitive payment information is protected during transmission.
+
+## Class: Encryption
+
+```java
+package com.github.theresasogunle;
+
+public class Encryption
+```
+
+## Methods
+
+### encryptParameters()
+
+Encrypts payment parameters using your configured API keys.
+
+```java
+public String encryptParameters(JSONObject api)
+```
+
+<ParamField path="api" type="JSONObject" required>
+  A JSON object containing the payment parameters to encrypt
+</ParamField>
+
+**Returns:** `String` - The encrypted payload as a Base64-encoded string
+
+**Description:** This method takes a JSON object containing payment parameters, adds the public key, and encrypts the entire payload using Triple DES encryption. The encrypted string can then be safely transmitted to Flutterwave's API.
+
+#### Example
+
+```java
+Encryption encryption = new Encryption();
+
+JSONObject paymentData = new JSONObject();
+paymentData.put("cardno", "5438898014560229");
+paymentData.put("cvv", "812");
+paymentData.put("amount", "10");
+paymentData.put("currency", "NGN");
+
+String encryptedData = encryption.encryptParameters(paymentData);
+System.out.println("Encrypted: " + encryptedData);
+```
+
+---
+
+### encryptParametersPreAuth()
+
+Encrypts parameters using hardcoded test credentials for pre-authorization testing.
+
+```java
+public String encryptParametersPreAuth(JSONObject api)
+```
+
+<ParamField path="api" type="JSONObject" required>
+  A JSON object containing the parameters to encrypt
+</ParamField>
+
+**Returns:** `String` - The encrypted payload using test credentials
+
+**Description:** This method is similar to `encryptParameters()` but uses hardcoded test credentials. It's primarily used for development and testing purposes.
+
+<Warning>
+This method uses hardcoded test keys and should only be used in development/testing environments.
+</Warning>
+
+---
+
+## Static Utility Methods
+
+The following static methods are used internally but can also be called directly for custom encryption needs.
+
+### getKey()
+
+Generates an encryption key from your secret key.
+
+```java
+public static String getKey(String seedKey)
+```
+
+<ParamField path="seedKey" type="String" required>
+  Your Flutterwave secret key (e.g., "FLWSECK-xxxxx")
+</ParamField>
+
+**Returns:** `String` - A 24-character encryption key derived from the secret key
+
+**Description:** This method generates a Triple DES encryption key by hashing your secret key using MD5 and combining it with portions of the original key. The resulting key is used for encrypting payment data.
+
+#### Example
+
+```java
+String secretKey = "FLWSECK-xxxxxxxxxxxxx";
+String encryptionKey = Encryption.getKey(secretKey);
+System.out.println("Encryption key: " + encryptionKey);
+```
+
+---
+
+### encryptData()
+
+Encrypts a message using Triple DES encryption.
+
+```java
+public static String encryptData(String message, String _encryptionKey)
+```
+
+<ParamField path="message" type="String" required>
+  The plaintext message to encrypt
+</ParamField>
+
+<ParamField path="_encryptionKey" type="String" required>
+  The 24-character encryption key
+</ParamField>
+
+**Returns:** `String` - The encrypted message as a Base64-encoded string
+
+**Description:** This method encrypts a string using the Triple DES (3DES) algorithm in ECB mode with PKCS5 padding. The encrypted output is Base64-encoded for safe transmission.
+
+#### Example
+
+```java
+String secretKey = "FLWSECK-xxxxxxxxxxxxx";
+String encryptionKey = Encryption.getKey(secretKey);
+
+String message = "{\"amount\":\"100\",\"currency\":\"NGN\"}";
+String encrypted = Encryption.encryptData(message, encryptionKey);
+
+System.out.println("Encrypted data: " + encrypted);
+```
+
+---
+
+### toHexStr()
+
+Converts a byte array to a hexadecimal string.
+
+```java
+public static String toHexStr(byte[] bytes)
+```
+
+<ParamField path="bytes" type="byte[]" required>
+  The byte array to convert
+</ParamField>
+
+**Returns:** `String` - Hexadecimal representation of the byte array
+
+**Description:** This utility method converts a byte array to its hexadecimal string representation. It's used internally during the key generation process.
+
+#### Example
+
+```java
+byte[] data = {0x48, 0x65, 0x6C, 0x6C, 0x6F};
+String hexString = Encryption.toHexStr(data);
+System.out.println("Hex: " + hexString); // Output: "48656c6c6f"
+```
+
+---
+
+## Encryption Algorithm Details
+
+<Note>
+The encryption uses:
+- **Algorithm:** Triple DES (3DES)
+- **Mode:** ECB (Electronic Codebook)
+- **Padding:** PKCS5
+- **Key Length:** 24 bytes
+- **Output Encoding:** Base64
+</Note>
+
+## Security Considerations
+
+<Warning>
+**Important Security Notes:**
+- Always use your production keys in production environments
+- Never log or expose encrypted data in production
+- The `encryptParametersPreAuth()` method should only be used for testing
+- Keep your secret keys secure and never commit them to version control
+</Warning>
+
+## Complete Example
+
+```java
+import org.json.JSONObject;
+import com.github.theresasogunle.Encryption;
+
+public class PaymentExample {
+    public static void main(String[] args) {
+        // Create payment data
+        JSONObject paymentData = new JSONObject();
+        paymentData.put("cardno", "5438898014560229");
+        paymentData.put("cvv", "812");
+        paymentData.put("expirymonth", "09");
+        paymentData.put("expiryyear", "22");
+        paymentData.put("amount", "1000");
+        paymentData.put("currency", "NGN");
+        paymentData.put("email", "customer@example.com");
+        
+        // Encrypt the data
+        Encryption encryption = new Encryption();
+        String encryptedPayload = encryption.encryptParameters(paymentData);
+        
+        // Use encrypted payload in API request
+        System.out.println("Ready to send: " + encryptedPayload);
+    }
+}
+```

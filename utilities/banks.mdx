@@ -1,0 +1,82 @@
+---
+title: 'Banks'
+description: 'Retrieve a list of banks available for charging on Flutterwave'
+---
+
+## Overview
+
+The `Bank` class provides methods to retrieve information about banks that can be charged on the Flutterwave platform. This is essential for implementing direct debit and bank account payment flows.
+
+## Class: Bank
+
+### Method: getAllBanks()
+
+Retrieves a comprehensive list of banks that can be charged on Flutterwave.
+
+**Returns:** `JsonNode`
+
+**Response Details:**
+- Returns a `JsonNode` containing bank information
+- Each bank includes an `internetbanking` key/value pair:
+  - `false`: Account can be charged using the direct account method
+  - `true`: Account must be charged using the internet banking flow
+
+<Note>
+The `internetbanking` field in the response indicates which charging method should be used for each bank.
+</Note>
+
+## Usage Example
+
+<Code>
+```java
+import com.github.theresasogunle.Bank;
+import com.github.theresasogunle.RaveConstant;
+import com.github.theresasogunle.RaveConstant.Environment;
+
+// Set environment
+RaveConstant.ENVIRONMENT = Environment.STAGING;
+
+// Create Bank instance
+Bank bank = new Bank();
+
+// Get all banks
+JsonNode banks = bank.getAllBanks();
+System.out.println(banks);
+```
+</Code>
+
+## Configuration
+
+Before using the Bank class, ensure you've set the appropriate environment:
+
+<Code>
+```java
+// For testing
+RaveConstant.ENVIRONMENT = Environment.STAGING;
+
+// For production
+RaveConstant.ENVIRONMENT = Environment.LIVE;
+```
+</Code>
+
+<Info>
+No authentication keys are required for retrieving the bank list, as this is public information.
+</Info>
+
+## Use Cases
+
+- Populate bank selection dropdowns in your payment forms
+- Determine the appropriate charging method for a specific bank
+- Validate bank codes before initiating payments
+- Display available banks to users during account setup
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Account Payments" icon="building-columns" href="/payments/account-payments">
+    Learn how to charge bank accounts
+  </Card>
+  <Card title="Alternative Payments" icon="wallet" href="/payments/alternative-payments">
+    Explore alternative payment methods
+  </Card>
+</CardGroup>

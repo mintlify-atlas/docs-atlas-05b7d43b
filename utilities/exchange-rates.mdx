@@ -1,0 +1,122 @@
+---
+title: 'Exchange Rates'
+description: 'Query foreign exchange rates for currency conversion'
+---
+
+## Overview
+
+The `ExchangeRates` class enables you to query real-time foreign exchange rates between different currencies. This is useful for displaying conversion rates to users or calculating cross-currency transaction amounts.
+
+## Class: ExchangeRates
+
+### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `origin_currency` | String | The currency to convert from (e.g., "NGN") |
+| `destination_currency` | String | The currency to convert to (e.g., "USD") |
+| `amount` | String | The amount to convert |
+
+### Method: forex()
+
+Queries the exchange rate between two currencies for a specified amount.
+
+**Returns:** `JSONObject` containing the exchange rate information
+
+## Usage Example
+
+<Code>
+```java
+import com.github.theresasogunle.ExchangeRates;
+import com.github.theresasogunle.RaveConstant;
+import com.github.theresasogunle.RaveConstant.Environment;
+
+// Configure credentials
+RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+RaveConstant.ENVIRONMENT = Environment.STAGING; // or Environment.LIVE
+
+// Create ExchangeRates instance
+ExchangeRates exchangeRates = new ExchangeRates();
+
+// Set conversion parameters using method chaining
+exchangeRates
+    .setAmount("500")
+    .setDestination_currency("USD")
+    .setOrigin_currency("NGN");
+
+// Get exchange rate
+JSONObject result = exchangeRates.forex();
+System.out.println(result);
+```
+</Code>
+
+## Setter Methods
+
+The `ExchangeRates` class supports method chaining for convenient configuration:
+
+### setAmount(String amount)
+
+Sets the amount to convert.
+
+**Parameters:**
+- `amount`: The amount as a string
+
+**Returns:** `ExchangeRates` instance (for chaining)
+
+### setOrigin_currency(String currency)
+
+Sets the source currency code.
+
+**Parameters:**
+- `currency`: Three-letter currency code (e.g., "NGN", "USD", "GBP")
+
+**Returns:** `ExchangeRates` instance (for chaining)
+
+### setDestination_currency(String currency)
+
+Sets the target currency code.
+
+**Parameters:**
+- `currency`: Three-letter currency code (e.g., "USD", "EUR", "GHS")
+
+**Returns:** `ExchangeRates` instance (for chaining)
+
+<Note>
+All three properties (amount, origin_currency, and destination_currency) must be set before calling the `forex()` method.
+</Note>
+
+## Supported Currencies
+
+Flutterwave supports a wide range of currencies. Common examples include:
+
+- **NGN** - Nigerian Naira
+- **USD** - US Dollar
+- **EUR** - Euro
+- **GBP** - British Pound
+- **GHS** - Ghanaian Cedi
+- **KES** - Kenyan Shilling
+- **ZAR** - South African Rand
+
+<Info>
+Exchange rates are queried in real-time and may fluctuate based on market conditions.
+</Info>
+
+## Use Cases
+
+- Display current exchange rates to customers
+- Calculate transaction amounts in different currencies
+- Provide currency conversion estimates before payment
+- Build multi-currency pricing displays
+- Implement currency converters in your application
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Card Payments" icon="credit-card" href="/payments/card-payments">
+    Accept card payments in multiple currencies
+  </Card>
+  <Card title="Configuration" icon="gear" href="/configuration">
+    Configure your API keys
+  </Card>
+</CardGroup>

@@ -1,122 +1,112 @@
 {
   "$schema": "https://mintlify.com/docs.json",
+  "name": "Flutterwave Rave Java Library",
   "theme": "mint",
-  "name": "Mint Starter Kit",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#FF6B00",
+    "light": "#FFA500",
+    "dark": "#CC5500"
   },
-  "favicon": "/favicon.svg",
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/theresasogunle/Fintech-flutterwave-Java-Library"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/theresasogunle/Fintech-flutterwave-Java-Library"
+    }
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
             "pages": [
-              "index",
+              "introduction",
+              "installation",
               "quickstart",
-              "development"
+              "configuration"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Payment Methods",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "payments/card-payments",
+              "payments/account-payments",
+              "payments/alternative-payments",
+              "payments/preauthorization"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Transaction Management",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "transactions/verify",
+              "transactions/refunds",
+              "transactions/fees"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Utilities",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "utilities/banks",
+              "utilities/exchange-rates",
+              "utilities/encryption",
+              "utilities/checksum"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": [
+              "advanced/polling",
+              "advanced/error-handling",
+              "advanced/testing"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Core Classes",
             "pages": [
-              "api-reference/introduction"
+              "api/card-charge",
+              "api/account-charge",
+              "api/alternative-payment"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Transaction Classes",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api/transaction",
+              "api/refund",
+              "api/preauthorization"
+            ]
+          },
+          {
+            "group": "Utility Classes",
+            "pages": [
+              "api/bank",
+              "api/fees",
+              "api/exchange-rates",
+              "api/encryption",
+              "api/checksum"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "api/rave-constant",
+              "api/environment",
+              "api/endpoints"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+    ]
   }
 }

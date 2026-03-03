@@ -1,0 +1,287 @@
+---
+title: 'Card Payments'
+description: 'Accept card payments with Mastercard, Verve, Visa, and international cards'
+icon: 'credit-card'
+---
+
+The `CardCharge` class enables you to process payments from various card types including Mastercard, Verve, Visa, and international cards. The library supports both PIN-based and redirect-based authentication flows.
+
+## Supported Card Types
+
+- **Mastercard & Verve**: PIN-based authentication
+- **Visa (Local)**: Redirect-based authentication
+- **International Cards**: Redirect-based authentication
+
+## Setting Up a Card Charge
+
+Use the fluent API to configure your card charge:
+
+<ParamField path="cardno" type="string" required>
+  The card number
+</ParamField>
+
+<ParamField path="cvv" type="string" required>
+  The card CVV/CVC code
+</ParamField>
+
+<ParamField path="expirymonth" type="string" required>
+  Card expiry month (e.g., "09")
+</ParamField>
+
+<ParamField path="expiryyear" type="string" required>
+  Card expiry year (e.g., "19")
+</ParamField>
+
+<ParamField path="amount" type="string" required>
+  Transaction amount
+</ParamField>
+
+<ParamField path="email" type="string" required>
+  Customer's email address
+</ParamField>
+
+<ParamField path="txRef" type="string" required>
+  Your unique transaction reference
+</ParamField>
+
+<ParamField path="currency" type="string" default="NGN">
+  Currency code (defaults to NGN)
+</ParamField>
+
+<ParamField path="country" type="string" default="NG">
+  Country code (defaults to NG)
+</ParamField>
+
+<ParamField path="pin" type="string">
+  Customer's card PIN (required for Mastercard/Verve)
+</ParamField>
+
+<ParamField path="suggested_auth" type="string">
+  Suggested authentication method (e.g., "PIN")
+</ParamField>
+
+<ParamField path="redirect_url" type="string">
+  Redirect URL for Visa/International cards
+</ParamField>
+
+<ParamField path="device_fingerprint" type="string">
+  Device fingerprint for fraud detection (optional)
+</ParamField>
+
+## Charging Methods
+
+### Mastercard & Verve Cards
+
+Use the `chargeMasterAndVerveCard()` method for Mastercard and Verve cards with PIN authentication:
+
+```java
+RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+RaveConstant.ENVIRONMENT = Environment.STAGING; // or Environment.LIVE
+
+CardCharge payload = new CardCharge();
+payload.setCardno("4187427415564246")
+    .setCvv("828")
+    .setCurrency("NGN")
+    .setCountry("NG")
+    .setAmount("9000")
+    .setExpiryyear("19")
+    .setExpirymonth("09")
+    .setEmail("customer@example.com")
+    .setIP("103.238.105.185")
+    .setTxRef("MXX-ASC-4578")
+    .setDevice_fingerprint("69e6b7f0sb72037aa8428b70fbe03986c")
+    .setPin("3310")
+    .setSuggested_auth("PIN");
+
+JSONObject charge = payload.chargeMasterAndVerveCard();
+System.out.println(charge);
+```
+
+<Note>
+  For Mastercard and Verve cards, you must provide the customer's PIN and set `suggested_auth` to "PIN".
+</Note>
+
+#### Polling for Timeout
+
+If the charge request times out, use the polling variant:
+
+```java
+JSONObject poll = payload.chargeMasterAndVerveCard(true);
+```
+
+### Visa & International Cards
+
+Use the `chargeVisaAndIntl()` method for Visa and international cards with redirect authentication:
+
+```java
+CardCharge payload = new CardCharge();
+payload.setCardno("4187427415564246")
+    .setCvv("828")
+    .setCurrency("NGN")
+    .setCountry("NG")
+    .setAmount("9000")
+    .setExpiryyear("19")
+    .setExpirymonth("09")
+    .setEmail("customer@example.com")
+    .setIP("103.238.105.185")
+    .setTxRef("MXX-ASC-4578")
+    .setDevice_fingerprint("69e6b7f0sb72037aa8428b70fbe03986c")
+    .setRedirect_url("http://www.yourdomain.com/callback");
+
+JSONObject chargeVisa = payload.chargeVisaAndIntl();
+System.out.println(chargeVisa);
+```
+
+<Note>
+  For Visa and international cards, you must provide a `redirect_url` where users will complete their authentication.
+</Note>
+
+#### Polling for Timeout
+
+```java
+JSONObject pollVisa = payload.chargeVisaAndIntl(true);
+```
+
+## Validation Methods
+
+### PIN Validation (Mastercard & Verve)
+
+After initiating a charge, validate it using the OTP sent to the customer:
+
+```java
+payload.setOtp("12345")
+    .setTransaction_reference("FLW-MOCK-75dd012dc6c6b58807d69d0e89432e9f");
+
+JSONObject validateCharge = payload.validateCardCharge();
+System.out.println(validateCharge);
+```
+
+<Steps>
+  <Step title="Initiate Charge">
+    Call `chargeMasterAndVerveCard()` with customer's card details and PIN
+  </Step>
+  
+  <Step title="Retrieve Transaction Reference">
+    Extract the `flwRef` from the charge response
+  </Step>
+  
+  <Step title="Get OTP">
+    Customer receives OTP via SMS or email
+  </Step>
+  
+  <Step title="Validate">
+    Call `validateCardCharge()` with the OTP and transaction reference
+  </Step>
+</Steps>
+
+#### Polling for Timeout
+
+```java
+JSONObject validatePoll = payload.validateCardCharge(true);
+```
+
+### Redirect Validation (Visa & International)
+
+For redirect-based authentication, open the auth URL returned in the charge response:
+
+```java
+payload.setAuthUrl("https://api.ravepay.co/flwv3-pug/getpaid/api/validate");
+payload.validateCardChargeVB();
+```
+
+<Warning>
+  The `validateCardChargeVB()` method opens a browser window for card validation. This is suitable for desktop applications but not for server-side implementations.
+</Warning>
+
+## Authentication Flows
+
+<Tabs>
+  <Tab title="PIN Authentication">
+    Used for **Mastercard and Verve** cards:
+    
+    1. Customer provides card details and PIN
+    2. System sends charge request with PIN and `suggested_auth: "PIN"`
+    3. Customer receives OTP
+    4. Validate with OTP to complete transaction
+    
+    **Response AuthMode**: `"PIN"`
+  </Tab>
+  
+  <Tab title="Redirect Authentication">
+    Used for **Visa and International** cards:
+    
+    1. Customer provides card details
+    2. System sends charge request with `redirect_url`
+    3. Customer is redirected to issuer's authentication page
+    4. Customer completes 3D Secure or VBV authentication
+    5. Customer is redirected back to your `redirect_url`
+    
+    **Response AuthMode**: `"VBVSECURE"` or `"AVS_VBVSECURECODE"`
+  </Tab>
+</Tabs>
+
+## Complete Example
+
+```java
+import com.github.theresasogunle.*;
+import org.json.JSONObject;
+
+public class CardPaymentExample {
+    public static void main(String[] args) {
+        // Configure Rave
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        
+        CardCharge payload = new CardCharge();
+        
+        // For Mastercard/Verve
+        payload.setCardno("4187427415564246")
+            .setCvv("828")
+            .setCurrency("NGN")
+            .setCountry("NG")
+            .setAmount("9000")
+            .setExpiryyear("19")
+            .setExpirymonth("09")
+            .setEmail("customer@example.com")
+            .setIP("103.238.105.185")
+            .setTxRef("MXX-ASC-4578")
+            .setPin("3310")
+            .setSuggested_auth("PIN");
+            
+        JSONObject charge = payload.chargeMasterAndVerveCard();
+        
+        // Validate with OTP
+        payload.setOtp("12345")
+            .setTransaction_reference(charge.getJSONObject("data").getString("flwRef"));
+            
+        JSONObject validateCharge = payload.validateCardCharge();
+        System.out.println("Payment Status: " + validateCharge.getString("status"));
+    }
+}
+```
+
+## Method Reference
+
+| Method | Parameters | Returns | Description |
+|--------|-----------|---------|-------------|
+| `chargeMasterAndVerveCard()` | - | `JSONObject` | Charges Mastercard and Verve cards with PIN |
+| `chargeMasterAndVerveCard(boolean polling)` | `polling` | `JSONObject` | Charges with polling for timeout |
+| `chargeVisaAndIntl()` | - | `JSONObject` | Charges Visa and international cards |
+| `chargeVisaAndIntl(boolean polling)` | `polling` | `JSONObject` | Charges with polling for timeout |
+| `validateCardCharge()` | - | `JSONObject` | Validates Mastercard/Verve charge with OTP |
+| `validateCardCharge(boolean polling)` | `polling` | `JSONObject` | Validates with polling for timeout |
+| `validateCardChargeVB()` | - | `void` | Opens browser for redirect validation |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Account Payments" icon="building-columns" href="/payments/account-payments">
+    Learn how to charge customer bank accounts
+  </Card>
+  
+  <Card title="Preauthorization" icon="lock" href="/payments/preauthorization">
+    Hold funds with pre-authorization
+  </Card>
+</CardGroup>

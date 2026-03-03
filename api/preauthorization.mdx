@@ -1,0 +1,543 @@
+---
+title: 'PreAuthorization'
+description: 'Handle pre-authorized card payments'
+---
+
+## Overview
+
+The `PreAuthorization` class handles pre-authorized card payments with Flutterwave. Pre-authorization allows you to reserve funds on a customer's card without immediately capturing them. This is useful for scenarios like hotel bookings, car rentals, or any situation where you need to hold funds before final charge confirmation.
+
+<Note>
+Preauth payments require special approval from Flutterwave and use dedicated API keys. This feature is not available by default and must be enabled for your merchant account.
+</Note>
+
+## Constructor
+
+```java
+PreAuthorization preAuth = new PreAuthorization();
+```
+
+## Setter Methods
+
+All setter methods return the `PreAuthorization` instance for method chaining.
+
+### setFlwref()
+
+Sets the Flutterwave reference for the pre-authorized transaction.
+
+<ParamField path="flwref" type="String" required>
+  The Flutterwave reference assigned to the transaction
+</ParamField>
+
+```java
+preAuth.setFlwref("FLW-MOCK-preauth-reference");
+```
+
+**Returns:** `PreAuthorization`
+
+### setAction()
+
+Sets the action to perform (used in refundOrVoid operations).
+
+<ParamField path="action" type="String" required>
+  The action to perform: "refund" to refund captured funds, or "void" to cancel an uncaptured pre-authorization
+</ParamField>
+
+```java
+preAuth.setAction("void");
+```
+
+**Returns:** `PreAuthorization`
+
+### setCardno()
+
+Sets the card number.
+
+<ParamField path="cardno" type="String" required>
+  The customer's card number
+</ParamField>
+
+```java
+preAuth.setCardno("5531886652142950");
+```
+
+**Returns:** `PreAuthorization`
+
+### setCvv()
+
+Sets the card CVV.
+
+<ParamField path="cvv" type="String" required>
+  The card's CVV/CVC security code
+</ParamField>
+
+```java
+preAuth.setCvv("564");
+```
+
+**Returns:** `PreAuthorization`
+
+### setExpirymonth()
+
+Sets the card expiry month.
+
+<ParamField path="expirymonth" type="String" required>
+  The card's expiry month (2 digits)
+</ParamField>
+
+```java
+preAuth.setExpirymonth("09");
+```
+
+**Returns:** `PreAuthorization`
+
+### setExpiryyear()
+
+Sets the card expiry year.
+
+<ParamField path="expiryyear" type="String" required>
+  The card's expiry year (2 or 4 digits)
+</ParamField>
+
+```java
+preAuth.setExpiryyear("25");
+```
+
+**Returns:** `PreAuthorization`
+
+### setCurrency()
+
+Sets the transaction currency.
+
+<ParamField path="currency" type="String" required>
+  The currency code (e.g., "NGN", "USD", "GHS")
+</ParamField>
+
+```java
+preAuth.setCurrency("NGN");
+```
+
+**Returns:** `PreAuthorization`
+
+### setCountry()
+
+Sets the country.
+
+<ParamField path="country" type="String" required>
+  The country code (e.g., "NG", "US", "GH")
+</ParamField>
+
+```java
+preAuth.setCountry("NG");
+```
+
+**Returns:** `PreAuthorization`
+
+### setAmount()
+
+Sets the transaction amount.
+
+<ParamField path="amount" type="String" required>
+  The amount to pre-authorize
+</ParamField>
+
+```java
+preAuth.setAmount("1000");
+```
+
+**Returns:** `PreAuthorization`
+
+### setEmail()
+
+Sets the customer's email.
+
+<ParamField path="email" type="String" required>
+  The customer's email address
+</ParamField>
+
+```java
+preAuth.setEmail("customer@example.com");
+```
+
+**Returns:** `PreAuthorization`
+
+### setPhonenumber()
+
+Sets the customer's phone number.
+
+<ParamField path="phonenumber" type="String" required>
+  The customer's phone number
+</ParamField>
+
+```java
+preAuth.setPhonenumber("+2348012345678");
+```
+
+**Returns:** `PreAuthorization`
+
+### setFirstname()
+
+Sets the customer's first name.
+
+<ParamField path="firstname" type="String" required>
+  The customer's first name
+</ParamField>
+
+```java
+preAuth.setFirstname("John");
+```
+
+**Returns:** `PreAuthorization`
+
+### setLastname()
+
+Sets the customer's last name.
+
+<ParamField path="lastname" type="String" required>
+  The customer's last name
+</ParamField>
+
+```java
+preAuth.setLastname("Doe");
+```
+
+**Returns:** `PreAuthorization`
+
+### setIP()
+
+Sets the customer's IP address.
+
+<ParamField path="IP" type="String">
+  The customer's IP address (automatically detected if not set)
+</ParamField>
+
+```java
+preAuth.setIP("192.168.1.1");
+```
+
+**Returns:** `PreAuthorization`
+
+### setTxRef()
+
+Sets the transaction reference.
+
+<ParamField path="txRef" type="String" required>
+  Your unique transaction reference
+</ParamField>
+
+```java
+preAuth.setTxRef("MC-PREAUTH-" + System.currentTimeMillis());
+```
+
+**Returns:** `PreAuthorization`
+
+### setRedirect_url()
+
+Sets the redirect URL.
+
+<ParamField path="redirect_url" type="String">
+  The URL to redirect to after payment
+</ParamField>
+
+```java
+preAuth.setRedirect_url("https://example.com/callback");
+```
+
+**Returns:** `PreAuthorization`
+
+### setDevice_fingerprint()
+
+Sets the device fingerprint.
+
+<ParamField path="device_fingerprint" type="String">
+  Unique device identifier for fraud prevention
+</ParamField>
+
+```java
+preAuth.setDevice_fingerprint("device-fingerprint-hash");
+```
+
+**Returns:** `PreAuthorization`
+
+### setCharge_type()
+
+Sets the charge type.
+
+<ParamField path="charge_type" type="String" required>
+  Must be set to "preauth" for pre-authorization
+</ParamField>
+
+```java
+preAuth.setCharge_type("preauth");
+```
+
+**Returns:** `PreAuthorization`
+
+## Getter Methods
+
+All getter methods return the corresponding String value:
+
+- `getFlwref()` - Returns the Flutterwave reference
+- `getAction()` - Returns the action
+- `getCardno()` - Returns the card number
+- `getCvv()` - Returns the CVV
+- `getExpirymonth()` - Returns the expiry month
+- `getExpiryyear()` - Returns the expiry year
+- `getCurrency()` - Returns the currency
+- `getCountry()` - Returns the country
+- `getAmount()` - Returns the amount
+- `getEmail()` - Returns the email
+- `getPhonenumber()` - Returns the phone number
+- `getFirstname()` - Returns the first name
+- `getLastname()` - Returns the last name
+- `getIP()` - Returns the IP address
+- `getTxRef()` - Returns the transaction reference
+- `getRedirect_url()` - Returns the redirect URL
+- `getDevice_fingerprint()` - Returns the device fingerprint
+- `getCharge_type()` - Returns the charge type
+
+## Public Methods
+
+### preAuthorizeCard()
+
+Initiates a pre-authorization on a customer's card. This reserves funds without immediately capturing them.
+
+```java
+public JSONObject preAuthorizeCard() throws JSONException
+```
+
+**Returns:** `JSONObject` - The pre-authorization response
+
+**Throws:** `JSONException` - If there's an error processing the JSON
+
+**Example:**
+
+```java
+import com.github.theresasogunle.PreAuthorization;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class PreAuthExample {
+    public static void main(String[] args) {
+        try {
+            PreAuthorization preAuth = new PreAuthorization();
+            
+            // Set customer and card details
+            preAuth.setCardno("5531886652142950")
+                   .setCvv("564")
+                   .setExpirymonth("09")
+                   .setExpiryyear("25")
+                   .setAmount("1000")
+                   .setCurrency("NGN")
+                   .setCountry("NG")
+                   .setEmail("customer@example.com")
+                   .setPhonenumber("+2348012345678")
+                   .setFirstname("John")
+                   .setLastname("Doe")
+                   .setTxRef("MC-PREAUTH-" + System.currentTimeMillis())
+                   .setCharge_type("preauth")
+                   .setRedirect_url("https://example.com/callback")
+                   .setDevice_fingerprint("device-fp-hash");
+            
+            // Initiate pre-authorization
+            JSONObject response = preAuth.preAuthorizeCard();
+            
+            if (response.getString("status").equals("success")) {
+                JSONObject data = response.getJSONObject("data");
+                String flwRef = data.getString("flwRef");
+                System.out.println("Pre-authorization successful!");
+                System.out.println("Flutterwave Reference: " + flwRef);
+                
+                // Store flwRef for later capture or void
+            } else {
+                System.out.println("Pre-authorization failed: " + response.getString("message"));
+            }
+            
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+<ResponseField name="status" type="String">
+  Status of the pre-authorization request
+</ResponseField>
+
+<ResponseField name="data" type="Object">
+  Pre-authorization details including flwRef for later capture
+</ResponseField>
+
+### capture()
+
+Captures the pre-authorized funds. This finalizes the transaction and transfers the reserved funds.
+
+```java
+public JSONObject capture()
+```
+
+**Returns:** `JSONObject` - The capture response
+
+**Example:**
+
+```java
+// After successful pre-authorization
+PreAuthorization preAuth = new PreAuthorization();
+preAuth.setFlwref("FLW-PREAUTH-MOCK-12345");
+
+JSONObject captureResponse = preAuth.capture();
+
+if (captureResponse.getString("status").equals("success")) {
+    System.out.println("Funds captured successfully");
+    JSONObject data = captureResponse.getJSONObject("data");
+    System.out.println("Amount Captured: " + data.getString("amount"));
+} else {
+    System.out.println("Capture failed: " + captureResponse.getString("message"));
+}
+```
+
+<ResponseField name="status" type="String">
+  Status of the capture operation
+</ResponseField>
+
+<ResponseField name="data" type="Object">
+  Capture details including final transaction amount
+</ResponseField>
+
+### refundOrVoid()
+
+Refunds captured funds or voids an uncaptured pre-authorization.
+
+```java
+public JSONObject refundOrVoid()
+```
+
+**Returns:** `JSONObject` - The refund or void response
+
+**Example:**
+
+```java
+// Void an uncaptured pre-authorization
+PreAuthorization preAuth = new PreAuthorization();
+preAuth.setFlwref("FLW-PREAUTH-MOCK-12345")
+       .setAction("void");
+
+JSONObject voidResponse = preAuth.refundOrVoid();
+
+if (voidResponse.getString("status").equals("success")) {
+    System.out.println("Pre-authorization voided successfully");
+}
+
+// Refund captured funds
+PreAuthorization preAuthRefund = new PreAuthorization();
+preAuthRefund.setFlwref("FLW-PREAUTH-MOCK-67890")
+             .setAction("refund");
+
+JSONObject refundResponse = preAuthRefund.refundOrVoid();
+
+if (refundResponse.getString("status").equals("success")) {
+    System.out.println("Funds refunded successfully");
+}
+```
+
+<ResponseField name="status" type="String">
+  Status of the refund or void operation
+</ResponseField>
+
+<ResponseField name="data" type="Object">
+  Operation details
+</ResponseField>
+
+### setJSON()
+
+Internal method that constructs the JSON payload for pre-authorization. This method is called automatically by `preAuthorizeCard()`.
+
+```java
+public JSONObject setJSON()
+```
+
+**Returns:** `JSONObject` - The constructed JSON payload
+
+## Complete Workflow Example
+
+```java
+import com.github.theresasogunle.PreAuthorization;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class PreAuthWorkflow {
+    public static void main(String[] args) {
+        try {
+            // Step 1: Pre-authorize the card
+            PreAuthorization preAuth = new PreAuthorization();
+            
+            preAuth.setCardno("5531886652142950")
+                   .setCvv("564")
+                   .setExpirymonth("09")
+                   .setExpiryyear("25")
+                   .setAmount("5000")
+                   .setCurrency("NGN")
+                   .setCountry("NG")
+                   .setEmail("john.doe@example.com")
+                   .setPhonenumber("+2348012345678")
+                   .setFirstname("John")
+                   .setLastname("Doe")
+                   .setTxRef("HOTEL-BOOKING-" + System.currentTimeMillis())
+                   .setCharge_type("preauth")
+                   .setRedirect_url("https://hotel.com/booking-complete")
+                   .setDevice_fingerprint("unique-device-id");
+            
+            JSONObject preAuthResponse = preAuth.preAuthorizeCard();
+            
+            if (preAuthResponse.getString("status").equals("success")) {
+                String flwRef = preAuthResponse.getJSONObject("data").getString("flwRef");
+                System.out.println("Pre-authorization successful: " + flwRef);
+                
+                // Step 2: Later, capture the funds (e.g., when guest checks out)
+                PreAuthorization capture = new PreAuthorization();
+                capture.setFlwref(flwRef);
+                
+                JSONObject captureResponse = capture.capture();
+                
+                if (captureResponse.getString("status").equals("success")) {
+                    System.out.println("Funds captured successfully");
+                } else {
+                    System.out.println("Capture failed, attempting void...");
+                    
+                    // Step 3: If capture fails, void the pre-authorization
+                    PreAuthorization voidAuth = new PreAuthorization();
+                    voidAuth.setFlwref(flwRef).setAction("void");
+                    
+                    JSONObject voidResponse = voidAuth.refundOrVoid();
+                    System.out.println("Void response: " + voidResponse.toString());
+                }
+            } else {
+                System.out.println("Pre-authorization failed: " + 
+                                   preAuthResponse.getString("message"));
+            }
+            
+        } catch (JSONException e) {
+            System.err.println("Error in pre-authorization workflow: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+## Notes
+
+<Warning>
+Pre-authorization requires special API keys:
+- Public Key: `FLWPUBK-8cd258c49f38e05292e5472b2b15906e-X`
+- Secret Key: `FLWSECK-c51891678d48c39eff3701ff686bdb69-X`
+
+These keys are hardcoded in the library and are different from your regular Flutterwave keys. Pre-auth must be enabled on your merchant account.
+</Warning>
+
+- Pre-authorization is not available by default and requires approval from Flutterwave
+- The IP address is automatically detected using `InetAddress.getLocalHost()` if not manually set
+- All card data is encrypted using 3DES-24 encryption before transmission
+- Pre-authorized funds are typically held for 7-30 days depending on the card issuer
+- Always void uncaptured pre-authorizations to release the held funds
+- The `charge_type` must be set to "preauth" for pre-authorization transactions
+- Method chaining is supported for all setter methods for cleaner code

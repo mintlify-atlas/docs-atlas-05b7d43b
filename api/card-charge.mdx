@@ -1,0 +1,773 @@
+---
+title: "CardCharge"
+description: "Process card payments with comprehensive support for Mastercard, Verve, Visa, and international cards"
+---
+
+## Overview
+
+The `CardCharge` class handles all card-based payment transactions in the Flutterwave Rave Java Library. It supports multiple card types including Mastercard, Verve, Visa, and international cards, with built-in validation mechanisms for PIN, OTP, and 3D Secure authentication flows.
+
+## Constructor
+
+```java
+CardCharge cardCharge = new CardCharge();
+```
+
+The `CardCharge` class uses a default constructor. Configure the payment by chaining setter methods to build your charge request.
+
+## Setter Methods
+
+All setter methods return the `CardCharge` instance, enabling method chaining for fluent API usage.
+
+### Card Information
+
+<ParamField path="setCardno" type="CardCharge">
+  ```java
+  public CardCharge setCardno(String cardno)
+  ```
+  
+  Sets the card number for the transaction.
+  
+  **Parameters:**
+  - `cardno` (String): The customer's card number
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setCardno("5438898014560229");
+  ```
+</ParamField>
+
+<ParamField path="setCvv" type="CardCharge">
+  ```java
+  public CardCharge setCvv(String cvv)
+  ```
+  
+  Sets the card verification value (CVV).
+  
+  **Parameters:**
+  - `cvv` (String): The 3 or 4-digit CVV code
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setCvv("123");
+  ```
+</ParamField>
+
+<ParamField path="setExpirymonth" type="CardCharge">
+  ```java
+  public CardCharge setExpirymonth(String expirymonth)
+  ```
+  
+  Sets the card expiration month.
+  
+  **Parameters:**
+  - `expirymonth` (String): Two-digit month (e.g., "01" for January)
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setExpirymonth("09");
+  ```
+</ParamField>
+
+<ParamField path="setExpiryyear" type="CardCharge">
+  ```java
+  public CardCharge setExpiryyear(String expiryyear)
+  ```
+  
+  Sets the card expiration year.
+  
+  **Parameters:**
+  - `expiryyear` (String): Two or four-digit year (e.g., "22" or "2022")
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setExpiryyear("26");
+  ```
+</ParamField>
+
+<ParamField path="setPin" type="CardCharge">
+  ```java
+  public CardCharge setPin(String pin)
+  ```
+  
+  Sets the card PIN (required for Mastercard and Verve cards).
+  
+  **Parameters:**
+  - `pin` (String): The 4-digit card PIN
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setPin("3310");
+  ```
+</ParamField>
+
+### Transaction Details
+
+<ParamField path="setAmount" type="CardCharge">
+  ```java
+  public CardCharge setAmount(String amount)
+  ```
+  
+  Sets the transaction amount.
+  
+  **Parameters:**
+  - `amount` (String): The charge amount
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setAmount("100.00");
+  ```
+</ParamField>
+
+<ParamField path="setCurrency" type="CardCharge">
+  ```java
+  public CardCharge setCurrency(String currency)
+  ```
+  
+  Sets the transaction currency.
+  
+  **Parameters:**
+  - `currency` (String): Three-letter currency code (e.g., "NGN", "USD")
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setCurrency("NGN");
+  ```
+</ParamField>
+
+<ParamField path="setCountry" type="CardCharge">
+  ```java
+  public CardCharge setCountry(String country)
+  ```
+  
+  Sets the country code for the transaction.
+  
+  **Parameters:**
+  - `country` (String): Two-letter country code (e.g., "NG", "US")
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setCountry("NG");
+  ```
+</ParamField>
+
+<ParamField path="setTxRef" type="CardCharge">
+  ```java
+  public CardCharge setTxRef(String txRef)
+  ```
+  
+  Sets your unique transaction reference.
+  
+  **Parameters:**
+  - `txRef` (String): Unique transaction reference for tracking
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setTxRef("MC-" + System.currentTimeMillis());
+  ```
+</ParamField>
+
+<ParamField path="setCharge_type" type="CardCharge">
+  ```java
+  public CardCharge setCharge_type(String charge_type)
+  ```
+  
+  Sets the charge type for the transaction.
+  
+  **Parameters:**
+  - `charge_type` (String): The type of charge
+  
+  **Returns:** `CardCharge` instance for method chaining
+</ParamField>
+
+### Customer Information
+
+<ParamField path="setEmail" type="CardCharge">
+  ```java
+  public CardCharge setEmail(String email)
+  ```
+  
+  Sets the customer's email address.
+  
+  **Parameters:**
+  - `email` (String): Customer email address
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setEmail("customer@example.com");
+  ```
+</ParamField>
+
+<ParamField path="setFirstname" type="CardCharge">
+  ```java
+  public CardCharge setFirstname(String firstname)
+  ```
+  
+  Sets the customer's first name.
+  
+  **Parameters:**
+  - `firstname` (String): Customer first name
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setFirstname("John");
+  ```
+</ParamField>
+
+<ParamField path="setLastname" type="CardCharge">
+  ```java
+  public CardCharge setLastname(String lastname)
+  ```
+  
+  Sets the customer's last name.
+  
+  **Parameters:**
+  - `lastname` (String): Customer last name
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setLastname("Doe");
+  ```
+</ParamField>
+
+<ParamField path="setPhonenumber" type="CardCharge">
+  ```java
+  public CardCharge setPhonenumber(String phonenumber)
+  ```
+  
+  Sets the customer's phone number.
+  
+  **Parameters:**
+  - `phonenumber` (String): Customer phone number
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setPhonenumber("+2348012345678");
+  ```
+</ParamField>
+
+### Security & Tracking
+
+<ParamField path="setIP" type="CardCharge">
+  ```java
+  public CardCharge setIP(String IP)
+  ```
+  
+  Sets the customer's IP address for fraud prevention.
+  
+  **Parameters:**
+  - `IP` (String): Customer IP address
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setIP("103.238.105.185");
+  ```
+</ParamField>
+
+<ParamField path="setDevice_fingerprint" type="CardCharge">
+  ```java
+  public CardCharge setDevice_fingerprint(String device_fingerprint)
+  ```
+  
+  Sets the device fingerprint for enhanced security.
+  
+  **Parameters:**
+  - `device_fingerprint` (String): Unique device identifier
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setDevice_fingerprint("69e6b7f0b72037aa8428b70fbe03986c");
+  ```
+</ParamField>
+
+<ParamField path="setRedirect_url" type="CardCharge">
+  ```java
+  public CardCharge setRedirect_url(String redirect_url)
+  ```
+  
+  Sets the URL to redirect to after 3D Secure authentication.
+  
+  **Parameters:**
+  - `redirect_url` (String): URL for post-authentication redirect
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setRedirect_url("https://example.com/callback");
+  ```
+</ParamField>
+
+<ParamField path="setSuggested_auth" type="CardCharge">
+  ```java
+  public CardCharge setSuggested_auth(String suggested_auth)
+  ```
+  
+  Sets the suggested authentication method.
+  
+  **Parameters:**
+  - `suggested_auth` (String): Authentication type (e.g., "PIN", "NOAUTH")
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setSuggested_auth("PIN");
+  ```
+</ParamField>
+
+### Validation Parameters
+
+<ParamField path="setTransactionreference" type="CardCharge">
+  ```java
+  public CardCharge setTransactionreference(String transaction_reference)
+  ```
+  
+  Sets the Flutterwave transaction reference for validation.
+  
+  **Parameters:**
+  - `transaction_reference` (String): The flwRef returned from charge response
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setTransactionreference("FLW-MOCK-62062448a5398eb178e855f5bd32895e");
+  ```
+</ParamField>
+
+<ParamField path="setOtp" type="CardCharge">
+  ```java
+  public CardCharge setOtp(String otp)
+  ```
+  
+  Sets the OTP for transaction validation.
+  
+  **Parameters:**
+  - `otp` (String): One-time password sent to customer
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setOtp("12345");
+  ```
+</ParamField>
+
+<ParamField path="setAuthUrl" type="CardCharge">
+  ```java
+  public CardCharge setAuthUrl(String authUrl)
+  ```
+  
+  Sets the authentication URL for 3D Secure validation.
+  
+  **Parameters:**
+  - `authUrl` (String): The auth URL returned from charge response
+  
+  **Returns:** `CardCharge` instance for method chaining
+  
+  **Example:**
+  ```java
+  cardCharge.setAuthUrl("https://ravesandbox.flutterwave.com/...");
+  ```
+</ParamField>
+
+## Charge Methods
+
+### chargeMasterAndVerveCard()
+
+```java
+public JSONObject chargeMasterAndVerveCard() throws JSONException
+```
+
+Charges Mastercard and Verve cards that require PIN authentication.
+
+<ParamField path="Return Value" type="JSONObject">
+  Returns a JSON response containing the charge status and authentication requirements.
+  
+  **Required Fields:**
+  - Card number, CVV, expiry month/year
+  - Amount, currency, country
+  - Email, firstname, lastname
+  - Transaction reference
+  - PIN and suggested_auth
+</ParamField>
+
+**Example:**
+
+```java
+CardCharge cardCharge = new CardCharge();
+
+JSONObject response = cardCharge
+    .setCardno("5438898014560229")
+    .setCvv("789")
+    .setExpirymonth("09")
+    .setExpiryyear("22")
+    .setAmount("100")
+    .setCurrency("NGN")
+    .setCountry("NG")
+    .setEmail("customer@example.com")
+    .setFirstname("John")
+    .setLastname("Doe")
+    .setTxRef("MC-" + System.currentTimeMillis())
+    .setPin("3310")
+    .setSuggested_auth("PIN")
+    .setIP("103.238.105.185")
+    .setDevice_fingerprint("69e6b7f0b72037aa8428b70fbe03986c")
+    .chargeMasterAndVerveCard();
+
+System.out.println(response.toString());
+```
+
+### chargeMasterAndVerveCard(boolean polling)
+
+```java
+public JSONObject chargeMasterAndVerveCard(boolean polling)
+```
+
+Charges Mastercard and Verve cards with timeout handling via polling.
+
+<ParamField path="polling" type="boolean">
+  Enable polling for timeout scenarios
+</ParamField>
+
+<ParamField path="Return Value" type="JSONObject">
+  Returns a JSON response with charge status, handling network timeouts gracefully.
+</ParamField>
+
+**Example:**
+
+```java
+JSONObject response = cardCharge
+    .setCardno("5438898014560229")
+    // ... other fields ...
+    .chargeMasterAndVerveCard(true);
+```
+
+### chargeVisaAndIntl()
+
+```java
+public JSONObject chargeVisaAndIntl() throws JSONException
+```
+
+Charges Visa and international cards using 3D Secure authentication.
+
+<ParamField path="Return Value" type="JSONObject">
+  Returns a JSON response containing authUrl for 3D Secure redirect.
+  
+  **Required Fields:**
+  - Card number, CVV, expiry month/year
+  - Amount, currency, country
+  - Email, firstname, lastname
+  - Transaction reference
+  - Redirect URL
+</ParamField>
+
+**Example:**
+
+```java
+CardCharge cardCharge = new CardCharge();
+
+JSONObject response = cardCharge
+    .setCardno("4556052704172643")
+    .setCvv("899")
+    .setExpirymonth("09")
+    .setExpiryyear("22")
+    .setAmount("100")
+    .setCurrency("NGN")
+    .setCountry("NG")
+    .setEmail("customer@example.com")
+    .setFirstname("Jane")
+    .setLastname("Smith")
+    .setTxRef("VISA-" + System.currentTimeMillis())
+    .setRedirect_url("https://example.com/callback")
+    .setIP("103.238.105.185")
+    .setDevice_fingerprint("69e6b7f0b72037aa8428b70fbe03986c")
+    .chargeVisaAndIntl();
+
+System.out.println(response.toString());
+```
+
+### chargeVisaAndIntl(boolean polling)
+
+```java
+public JSONObject chargeVisaAndIntl(boolean polling) throws JSONException
+```
+
+Charges Visa and international cards with timeout handling.
+
+<ParamField path="polling" type="boolean">
+  Enable polling for timeout scenarios
+</ParamField>
+
+<ParamField path="Return Value" type="JSONObject">
+  Returns a JSON response with charge status and polling support.
+</ParamField>
+
+**Example:**
+
+```java
+JSONObject response = cardCharge
+    .setCardno("4556052704172643")
+    // ... other fields ...
+    .chargeVisaAndIntl(true);
+```
+
+## Validation Methods
+
+### validateCardCharge()
+
+```java
+public JSONObject validateCardCharge()
+```
+
+Validates a card charge using OTP when authentication mode is PIN.
+
+<ParamField path="Return Value" type="JSONObject">
+  Returns validation result indicating success or failure.
+  
+  **Required Fields Before Calling:**
+  - Transaction reference (flwRef from charge response)
+  - OTP (from customer)
+</ParamField>
+
+**Example:**
+
+```java
+// After initial charge
+JSONObject chargeResponse = cardCharge.chargeMasterAndVerveCard();
+String flwRef = chargeResponse.getJSONObject("data").getString("flwRef");
+
+// Customer receives OTP and provides it
+String otp = "12345"; // from customer input
+
+// Validate the charge
+JSONObject validationResponse = cardCharge
+    .setTransactionreference(flwRef)
+    .setOtp(otp)
+    .validateCardCharge();
+
+System.out.println(validationResponse.toString());
+```
+
+### validateCardCharge(boolean polling)
+
+```java
+public JSONObject validateCardCharge(boolean polling)
+```
+
+Validates a card charge with timeout handling.
+
+<ParamField path="polling" type="boolean">
+  Enable polling for timeout scenarios
+</ParamField>
+
+<ParamField path="Return Value" type="JSONObject">
+  Returns validation result with polling support.
+</ParamField>
+
+**Example:**
+
+```java
+JSONObject validationResponse = cardCharge
+    .setTransactionreference(flwRef)
+    .setOtp(otp)
+    .validateCardCharge(true);
+```
+
+### validateCardChargeVB()
+
+```java
+public void validateCardChargeVB()
+```
+
+Validates card charge using 3D Secure (VBVSECURE or AVS_VBVSECURECODE). Opens the authentication URL in the default browser.
+
+<ParamField path="Return Value" type="void">
+  Opens browser window for 3D Secure authentication.
+  
+  **Required Fields Before Calling:**
+  - Auth URL (from charge response)
+</ParamField>
+
+**Example:**
+
+```java
+// After charging Visa/international card
+JSONObject chargeResponse = cardCharge.chargeVisaAndIntl();
+String authUrl = chargeResponse.getJSONObject("data").getString("authurl");
+
+// Open 3D Secure authentication page
+cardCharge
+    .setAuthUrl(authUrl)
+    .validateCardChargeVB();
+
+// Browser opens for customer to complete authentication
+```
+
+## Complete Payment Flow Examples
+
+### Mastercard/Verve Flow (PIN + OTP)
+
+```java
+import com.github.theresasogunle.CardCharge;
+import org.json.JSONObject;
+
+public class MastercardPayment {
+    public static void main(String[] args) {
+        CardCharge cardCharge = new CardCharge();
+        
+        try {
+            // Step 1: Initiate charge
+            JSONObject chargeResponse = cardCharge
+                .setCardno("5438898014560229")
+                .setCvv("789")
+                .setExpirymonth("09")
+                .setExpiryyear("22")
+                .setAmount("100")
+                .setCurrency("NGN")
+                .setCountry("NG")
+                .setEmail("customer@example.com")
+                .setFirstname("John")
+                .setLastname("Doe")
+                .setTxRef("MC-" + System.currentTimeMillis())
+                .setPin("3310")
+                .setSuggested_auth("PIN")
+                .setIP("103.238.105.185")
+                .setDevice_fingerprint("69e6b7f0b72037aa8428b70fbe03986c")
+                .chargeMasterAndVerveCard();
+            
+            System.out.println("Charge Response: " + chargeResponse.toString());
+            
+            // Step 2: Get transaction reference
+            String flwRef = chargeResponse.getJSONObject("data").getString("flwRef");
+            String authMode = chargeResponse.getJSONObject("data").getString("suggested_auth");
+            
+            if ("PIN".equals(authMode)) {
+                // Step 3: Customer receives OTP and provides it
+                String otp = "12345"; // Get from user input
+                
+                // Step 4: Validate with OTP
+                JSONObject validationResponse = cardCharge
+                    .setTransactionreference(flwRef)
+                    .setOtp(otp)
+                    .validateCardCharge();
+                
+                System.out.println("Validation Response: " + validationResponse.toString());
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### Visa/International Flow (3D Secure)
+
+```java
+import com.github.theresasogunle.CardCharge;
+import org.json.JSONObject;
+
+public class VisaPayment {
+    public static void main(String[] args) {
+        CardCharge cardCharge = new CardCharge();
+        
+        try {
+            // Step 1: Initiate charge
+            JSONObject chargeResponse = cardCharge
+                .setCardno("4556052704172643")
+                .setCvv("899")
+                .setExpirymonth("09")
+                .setExpiryyear("22")
+                .setAmount("100")
+                .setCurrency("NGN")
+                .setCountry("NG")
+                .setEmail("customer@example.com")
+                .setFirstname("Jane")
+                .setLastname("Smith")
+                .setTxRef("VISA-" + System.currentTimeMillis())
+                .setRedirect_url("https://example.com/callback")
+                .setIP("103.238.105.185")
+                .setDevice_fingerprint("69e6b7f0b72037aa8428b70fbe03986c")
+                .chargeVisaAndIntl();
+            
+            System.out.println("Charge Response: " + chargeResponse.toString());
+            
+            // Step 2: Get auth URL
+            String authUrl = chargeResponse.getJSONObject("data").getString("authurl");
+            String authMode = chargeResponse.getJSONObject("data").getString("suggested_auth");
+            
+            if ("VBVSECURE".equals(authMode) || "AVS_VBVSECURECODE".equals(authMode)) {
+                // Step 3: Open 3D Secure page
+                cardCharge
+                    .setAuthUrl(authUrl)
+                    .validateCardChargeVB();
+                
+                System.out.println("3D Secure authentication opened in browser");
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+## Response Handling
+
+<ResponseField name="status" type="string">
+  The status of the charge (e.g., "success", "error")
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Description of the charge result
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains transaction details including:
+  - `flwRef`: Flutterwave transaction reference
+  - `suggested_auth`: Authentication method required
+  - `authurl`: URL for 3D Secure (Visa/International)
+  - `chargeResponseCode`: Response code from processor
+  - `chargeResponseMessage`: Message from processor
+</ResponseField>
+
+## Notes
+
+- All setter methods return the `CardCharge` instance for fluent chaining
+- PIN is required for Mastercard and Verve cards
+- Redirect URL is required for Visa and international cards
+- Transaction reference and device fingerprint enhance security and tracking
+- Always handle JSONException when calling charge methods
+- Use polling variants for better timeout handling in production environments

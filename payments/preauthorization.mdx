@@ -1,0 +1,381 @@
+---
+title: 'Pre-authorization'
+description: 'Hold funds on customer cards and capture them later'
+icon: 'lock'
+---
+
+The `PreAuthorization` class allows you to hold funds on a customer's card without immediately charging it. This is useful for scenarios like hotel reservations, car rentals, or any situation where you need to guarantee payment availability before providing services.
+
+## Overview
+
+Pre-authorization follows a three-step flow:
+
+<Steps>
+  <Step title="Pre-authorize">
+    Hold funds on the customer's card without charging
+  </Step>
+  
+  <Step title="Capture">
+    Charge the held amount when ready (e.g., after service delivery)
+  </Step>
+  
+  <Step title="Refund or Void">
+    Release the hold or refund if needed
+  </Step>
+</Steps>
+
+<Warning>
+  Pre-authorization is not available for all accounts. This feature requires special approval from Flutterwave. Contact Flutterwave support to enable pre-authorization for your merchant account.
+</Warning>
+
+## Special Configuration
+
+Pre-authorization requires special API keys:
+
+```java
+RaveConstant.PUBLIC_KEY = "FLWPUBK-8cd258c49f38e05292e5472b2b15906e-X";
+RaveConstant.SECRET_KEY = "FLWSECK-c51891678d48c39eff3701ff686bdb69-X";
+RaveConstant.ENVIRONMENT = Environment.STAGING; // or Environment.LIVE
+```
+
+<Note>
+  The keys shown above are special pre-authorization keys. You must use these specific keys for pre-auth transactions, not your regular API keys.
+</Note>
+
+## Pre-authorization Parameters
+
+<ParamField path="cardno" type="string" required>
+  Customer's card number
+</ParamField>
+
+<ParamField path="cvv" type="string" required>
+  Card CVV/CVC code
+</ParamField>
+
+<ParamField path="expirymonth" type="string" required>
+  Card expiry month (e.g., "08")
+</ParamField>
+
+<ParamField path="expiryyear" type="string" required>
+  Card expiry year (e.g., "20")
+</ParamField>
+
+<ParamField path="amount" type="string" required>
+  Amount to pre-authorize
+</ParamField>
+
+<ParamField path="email" type="string" required>
+  Customer's email address
+</ParamField>
+
+<ParamField path="phonenumber" type="string" required>
+  Customer's phone number
+</ParamField>
+
+<ParamField path="firstname" type="string" required>
+  Customer's first name
+</ParamField>
+
+<ParamField path="lastname" type="string" required>
+  Customer's last name
+</ParamField>
+
+<ParamField path="txRef" type="string" required>
+  Your unique transaction reference
+</ParamField>
+
+<ParamField path="charge_type" type="string" required>
+  Must be set to "preauth"
+</ParamField>
+
+<ParamField path="redirect_url" type="string" required>
+  URL to redirect after authorization
+</ParamField>
+
+<ParamField path="currency" type="string" default="NGN">
+  Currency code (defaults to NGN)
+</ParamField>
+
+<ParamField path="country" type="string" default="NG">
+  Country code (defaults to NG)
+</ParamField>
+
+<ParamField path="IP" type="string">
+  Customer's IP address (auto-detected if not provided)
+</ParamField>
+
+<ParamField path="device_fingerprint" type="string">
+  Device fingerprint for fraud detection
+</ParamField>
+
+## Pre-authorizing a Card
+
+```java
+import com.github.theresasogunle.*;
+import org.json.JSONObject;
+
+public class PreAuthExample {
+    public static void main(String[] args) throws Exception {
+        // Configure special pre-auth keys
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-8cd258c49f38e05292e5472b2b15906e-X";
+        RaveConstant.SECRET_KEY = "FLWSECK-c51891678d48c39eff3701ff686bdb69-X";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        
+        PreAuthorization ch = new PreAuthorization();
+        ch.setCardno("5438898014560229")
+            .setCharge_type("preauth")
+            .setCvv("812")
+            .setExpirymonth("08")
+            .setExpiryyear("20")
+            .setCurrency("NGN")
+            .setCountry("NG")
+            .setAmount("100")
+            .setEmail("user@example.com")
+            .setPhonenumber("08056552980")
+            .setFirstname("John")
+            .setLastname("Doe")
+            .setIP("40.198.14")
+            .setTxRef("MXX-ASC-4578")
+            .setRedirect_url("https://rave-web.herokuapp.com/receivepayment")
+            .setDevice_fingerprint("69e6b7f0b72037aa8428b70fbe03986c");
+        
+        JSONObject response = ch.preAuthorizeCard();
+        System.out.println(response);
+        
+        // Extract flwRef from response for later use
+        String flwRef = response.getJSONObject("data").getString("flwRef");
+        System.out.println("Pre-auth Reference: " + flwRef);
+    }
+}
+```
+
+<Note>
+  The `charge_type` parameter must be set to `"preauth"` for pre-authorization transactions. The system will hold the specified amount on the card without actually charging it.
+</Note>
+
+## Capturing Pre-authorized Funds
+
+Once you're ready to charge the customer (e.g., after service delivery), capture the pre-authorized amount:
+
+```java
+PreAuthorization ch = new PreAuthorization();
+ch.setFlwref("FLW-MOCK-d310263f5f73e51d01e6dab32c893679");
+
+JSONObject capture = ch.capture();
+System.out.println("Capture Response: " + capture);
+
+if (capture.getString("status").equals("success")) {
+    System.out.println("Funds captured successfully!");
+}
+```
+
+<ParamField path="flwRef" type="string" required>
+  The payment gateway's unique reference returned from `preAuthorizeCard()`
+</ParamField>
+
+## Refunding or Voiding
+
+You can either refund a captured amount or void an uncaptured pre-authorization:
+
+### Voiding a Pre-authorization
+
+To release the hold without charging:
+
+```java
+PreAuthorization ch = new PreAuthorization();
+ch.setFlwref("FLW-MOCK-d310263f5f73e51d01e6dab32c893679")
+    .setAction("void");
+
+JSONObject result = ch.refundOrVoid();
+System.out.println("Void Response: " + result);
+```
+
+### Refunding a Captured Amount
+
+To refund after capturing:
+
+```java
+PreAuthorization ch = new PreAuthorization();
+ch.setFlwref("FLW-MOCK-d310263f5f73e51d01e6dab32c893679")
+    .setAction("refund");
+
+JSONObject result = ch.refundOrVoid();
+System.out.println("Refund Response: " + result);
+```
+
+<ParamField path="action" type="string" required>
+  Action to take: either "refund" or "void"
+</ParamField>
+
+<Tabs>
+  <Tab title="Void">
+    **When to use**: Before capturing funds
+    
+    **Effect**: Releases the hold on customer's card without any charge
+    
+    **Use case**: Customer cancels reservation before check-in
+  </Tab>
+  
+  <Tab title="Refund">
+    **When to use**: After capturing funds
+    
+    **Effect**: Returns the captured amount to customer's card
+    
+    **Use case**: Customer returns item or service was not satisfactory
+  </Tab>
+</Tabs>
+
+## Complete Workflow Example
+
+```java
+import com.github.theresasogunle.*;
+import org.json.JSONObject;
+
+public class CompletePreAuthFlow {
+    public static void main(String[] args) throws Exception {
+        // Step 1: Configure
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-8cd258c49f38e05292e5472b2b15906e-X";
+        RaveConstant.SECRET_KEY = "FLWSECK-c51891678d48c39eff3701ff686bdb69-X";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        
+        PreAuthorization preAuth = new PreAuthorization();
+        
+        // Step 2: Pre-authorize card
+        preAuth.setCardno("5438898014560229")
+            .setCharge_type("preauth")
+            .setCvv("812")
+            .setExpirymonth("08")
+            .setExpiryyear("20")
+            .setCurrency("NGN")
+            .setCountry("NG")
+            .setAmount("100")
+            .setEmail("user@example.com")
+            .setPhonenumber("08056552980")
+            .setFirstname("John")
+            .setLastname("Doe")
+            .setIP("40.198.14")
+            .setTxRef("MXX-ASC-4578")
+            .setRedirect_url("https://yourdomain.com/callback")
+            .setDevice_fingerprint("69e6b7f0b72037aa8428b70fbe03986c");
+        
+        JSONObject preAuthResponse = preAuth.preAuthorizeCard();
+        String flwRef = preAuthResponse.getJSONObject("data").getString("flwRef");
+        System.out.println("Pre-authorization successful. FlwRef: " + flwRef);
+        
+        // Step 3a: Capture funds (when ready to charge)
+        preAuth.setFlwref(flwRef);
+        JSONObject captureResponse = preAuth.capture();
+        
+        if (captureResponse.getString("status").equals("success")) {
+            System.out.println("Funds captured successfully!");
+            
+            // Step 4 (optional): Refund if needed
+            preAuth.setAction("refund");
+            JSONObject refundResponse = preAuth.refundOrVoid();
+            System.out.println("Refund status: " + refundResponse.getString("status"));
+        }
+        
+        // OR Step 3b: Void pre-authorization (if not capturing)
+        // preAuth.setFlwref(flwRef)
+        //     .setAction("void");
+        // JSONObject voidResponse = preAuth.refundOrVoid();
+        // System.out.println("Void status: " + voidResponse.getString("status"));
+    }
+}
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Hotel Reservations" icon="hotel">
+    Hold funds when customer books a room, capture on check-in, void if cancelled
+  </Card>
+  
+  <Card title="Car Rentals" icon="car">
+    Pre-authorize for rental amount + deposit, capture actual charges after return
+  </Card>
+  
+  <Card title="Event Tickets" icon="ticket">
+    Hold payment when tickets are reserved, capture closer to event date
+  </Card>
+  
+  <Card title="Custom Orders" icon="box">
+    Hold funds during production, capture when item ships
+  </Card>
+</CardGroup>
+
+## Method Reference
+
+| Method | Parameters | Returns | Description |
+|--------|-----------|---------|-------------|
+| `preAuthorizeCard()` | Card details + `charge_type: "preauth"` | `JSONObject` | Holds funds on card without charging |
+| `capture()` | `flwRef` | `JSONObject` | Captures pre-authorized funds |
+| `refundOrVoid()` | `flwRef`, `action` | `JSONObject` | Refunds or voids pre-authorization |
+
+## Important Considerations
+
+<Tabs>
+  <Tab title="Timing">
+    - Pre-authorizations typically expire after 7-30 days (varies by card issuer)
+    - Capture funds before the pre-auth expires
+    - Check with card networks for specific time limits
+    - Don't hold funds longer than necessary
+  </Tab>
+  
+  <Tab title="Amounts">
+    - Can only capture up to the pre-authorized amount
+    - Cannot increase the amount after pre-authorization
+    - If final amount is higher, create a new transaction for the difference
+    - If lower, only the actual amount will be captured
+  </Tab>
+  
+  <Tab title="Security">
+    - Pre-authorization requires special merchant approval
+    - Use dedicated pre-auth API keys
+    - Store `flwRef` securely for later capture/void
+    - Implement proper error handling for expired pre-auths
+  </Tab>
+</Tabs>
+
+## Best Practices
+
+1. **Communicate clearly with customers**: Let them know funds are being held, not charged immediately
+2. **Set expectations**: Inform customers when the hold will be released if not captured
+3. **Capture promptly**: Don't wait until the last minute before pre-auth expiration
+4. **Handle expirations**: Implement logic to detect and handle expired pre-authorizations
+5. **Void unused pre-auths**: Release holds as soon as you know they won't be needed
+6. **Monitor transactions**: Track pre-auth status and follow up on pending captures
+
+## Troubleshooting
+
+### Pre-authorization Failed
+
+- Verify you're using the special pre-auth API keys
+- Ensure `charge_type` is set to `"preauth"`
+- Check that pre-authorization is enabled for your account
+- Verify card details are correct
+
+### Capture Failed
+
+- Check if pre-authorization has expired
+- Verify the `flwRef` matches the original pre-auth
+- Ensure the amount doesn't exceed pre-authorized amount
+- Confirm funds are still available on the card
+
+### Void/Refund Failed
+
+- Verify the correct action ("void" vs "refund") for the transaction state
+- Check if transaction has already been captured (use refund, not void)
+- Ensure the `flwRef` is valid and matches the transaction
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Card Payments" icon="credit-card" href="/payments/card-payments">
+    Learn about standard card payment processing
+  </Card>
+  
+  <Card title="Transaction Verification" icon="magnifying-glass" href="/transactions/verify">
+    Verify and track transaction status
+  </Card>
+</CardGroup>

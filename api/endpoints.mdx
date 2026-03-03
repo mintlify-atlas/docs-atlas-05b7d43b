@@ -1,0 +1,355 @@
+---
+title: 'Endpoints'
+description: 'API endpoint management class that provides access to all Flutterwave Rave API endpoints'
+---
+
+## Overview
+
+The `Endpoints` class manages all API endpoint URLs for the Flutterwave Rave Java Library. It automatically configures endpoints based on the environment setting (staging or live) and provides getter methods to access properly formatted endpoint URLs.
+
+## Class Definition
+
+```java
+public class Endpoints
+```
+
+## Public Fields
+
+### Endpoint Constants
+
+<ParamField path="BANK_ENDPOINT" type="String">
+  Endpoint for retrieving the list of supported banks.
+  
+  **Access:** `public`
+</ParamField>
+
+<ParamField path="CHARGE_ENDPOINT" type="String">
+  Endpoint for initiating payment charges.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="CARD_VALIDATE_ENDPOINT" type="String">
+  Endpoint for validating card charges (OTP, PIN, etc.).
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="ACCOUNT_VALIDATE_ENDPOINT" type="String">
+  Endpoint for validating account/bank charges.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="TIMEOUT_ENDPOINT" type="String">
+  Endpoint for handling timeout scenarios with polling enabled.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="POLL_ENDPOINT" type="String">
+  Endpoint for polling transaction status.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="FEES_ENDPOINT" type="String">
+  Endpoint for calculating transaction fees.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="REFUND_ENDPOINT" type="String">
+  Endpoint for processing refunds.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="FOREX_ENDPOINT" type="String">
+  Endpoint for foreign exchange rate queries.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="VERIFY_TRANSACTION_ENDPOINT" type="String">
+  Endpoint for verifying transaction status.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="VERIFY_XREQUERY_ENDPOINT" type="String">
+  Endpoint for cross-verifying transaction queries.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="CAPTURE_ENDPOINT" type="String">
+  Endpoint for capturing pre-authorized transactions.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="REFUNDVOID_ENDPOINT" type="String">
+  Endpoint for refunding or voiding transactions.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="CHARGE_TIMEOUT_ENDPOINT" type="String">
+  Endpoint for initiating charges with timeout polling.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="VALIDATE_CARD_CHARGE_TIMEOUT_ENDPOINT" type="String">
+  Endpoint for validating card charges with timeout polling.
+  
+  **Access:** `public static`
+</ParamField>
+
+<ParamField path="VALIDATE_ACCOUNT_CHARGE_TIMEOUT_ENDPOINT" type="String">
+  Endpoint for validating account charges with timeout polling.
+  
+  **Access:** `public static`
+</ParamField>
+
+## Public Methods
+
+### getBankEndPoint()
+
+```java
+public String getBankEndPoint()
+```
+
+Retrieves the endpoint URL for fetching supported banks.
+
+**Returns:** `String` - The complete bank endpoint URL based on current environment
+
+---
+
+### getChargeEndPoint()
+
+```java
+public String getChargeEndPoint()
+```
+
+Retrieves the endpoint URL for initiating payment charges.
+
+**Returns:** `String` - The complete charge endpoint URL
+
+---
+
+### getValidateCardChargeEndPoint()
+
+```java
+public String getValidateCardChargeEndPoint()
+```
+
+Retrieves the endpoint URL for validating card charges.
+
+**Returns:** `String` - The complete card validation endpoint URL
+
+---
+
+### getValidateAccountChargeEndPoint()
+
+```java
+public String getValidateAccountChargeEndPoint()
+```
+
+Retrieves the endpoint URL for validating account/bank charges.
+
+**Returns:** `String` - The complete account validation endpoint URL
+
+---
+
+### getFeesEndPoint()
+
+```java
+public String getFeesEndPoint()
+```
+
+Retrieves the endpoint URL for calculating transaction fees.
+
+**Returns:** `String` - The complete fees endpoint URL
+
+---
+
+### getRefundEndPoint()
+
+```java
+public String getRefundEndPoint()
+```
+
+Retrieves the endpoint URL for processing refunds.
+
+**Returns:** `String` - The complete refund endpoint URL
+
+---
+
+### getForexEndPoint()
+
+```java
+public String getForexEndPoint()
+```
+
+Retrieves the endpoint URL for foreign exchange queries.
+
+**Returns:** `String` - The complete forex endpoint URL
+
+---
+
+### getVerifyEndPoint()
+
+```java
+public String getVerifyEndPoint()
+```
+
+Retrieves the endpoint URL for verifying transactions.
+
+**Returns:** `String` - The complete verification endpoint URL
+
+---
+
+### getVerifyXrequeryEndPoint()
+
+```java
+public String getVerifyXrequeryEndPoint()
+```
+
+Retrieves the endpoint URL for cross-verifying transaction queries.
+
+**Returns:** `String` - The complete xrequery endpoint URL
+
+---
+
+### getCaptureEndPoint()
+
+```java
+public String getCaptureEndPoint()
+```
+
+Retrieves the endpoint URL for capturing pre-authorized transactions.
+
+**Returns:** `String` - The complete capture endpoint URL
+
+---
+
+### getRefundOrVoidEndPoint()
+
+```java
+public String getRefundOrVoidEndPoint()
+```
+
+Retrieves the endpoint URL for refunding or voiding transactions.
+
+**Returns:** `String` - The complete refund/void endpoint URL
+
+---
+
+### getChargeTimeoutEndpoint()
+
+```java
+public String getChargeTimeoutEndpoint()
+```
+
+Retrieves the endpoint URL for initiating charges with timeout polling enabled.
+
+**Returns:** `String` - The complete charge timeout endpoint URL
+
+---
+
+### getValidateCardChargeTimeoutEndpoint()
+
+```java
+public String getValidateCardChargeTimeoutEndpoint()
+```
+
+Retrieves the endpoint URL for validating card charges with timeout polling.
+
+**Returns:** `String` - The complete card validation timeout endpoint URL
+
+---
+
+### getValidateAccountChargeTimeoutEndpoint()
+
+```java
+public String getValidateAccountChargeTimeoutEndpoint()
+```
+
+Retrieves the endpoint URL for validating account charges with timeout polling.
+
+**Returns:** `String` - The complete account validation timeout endpoint URL
+
+## Usage Example
+
+### Basic Usage
+
+```java
+import com.github.theresasogunle.Endpoints;
+import com.github.theresasogunle.RaveConstant;
+import com.github.theresasogunle.Environment;
+
+// Configure environment first
+RaveConstant.PUBLIC_KEY = "FLWPUBK_TEST-xxxxxxxxxxxxx-X";
+RaveConstant.SECRET_KEY = "FLWSECK_TEST-xxxxxxxxxxxxx-X";
+RaveConstant.ENVIRONMENT = Environment.STAGING;
+
+// Create Endpoints instance
+Endpoints endpoints = new Endpoints();
+
+// Get specific endpoint URLs
+String chargeUrl = endpoints.getChargeEndPoint();
+String verifyUrl = endpoints.getVerifyEndPoint();
+String bankUrl = endpoints.getBankEndPoint();
+
+System.out.println("Charge URL: " + chargeUrl);
+// Output: Charge URL: https://ravesandboxapi.flutterwave.com/flwv3-pug/getpaidx/api/charge
+```
+
+### Environment-Aware Endpoints
+
+```java
+import com.github.theresasogunle.Endpoints;
+import com.github.theresasogunle.RaveConstant;
+import com.github.theresasogunle.Environment;
+
+// Configure for live environment
+RaveConstant.ENVIRONMENT = Environment.LIVE;
+
+Endpoints endpoints = new Endpoints();
+String chargeUrl = endpoints.getChargeEndPoint();
+// Returns: https://api.ravepay.co/flwv3-pug/getpaidx/api/charge
+
+// Switch to staging
+RaveConstant.ENVIRONMENT = Environment.STAGING;
+Endpoints newEndpoints = new Endpoints();
+String stagingChargeUrl = newEndpoints.getChargeEndPoint();
+// Returns: https://ravesandboxapi.flutterwave.com/flwv3-pug/getpaidx/api/charge
+```
+
+<Note>
+  Each getter method automatically calls `init()` internally, which configures all endpoints based on the current `RaveConstant.ENVIRONMENT` setting. The endpoints dynamically switch between staging and live URLs.
+</Note>
+
+## How It Works
+
+1. **Initialization**: When any getter method is called, it triggers the `init()` method
+2. **Environment Check**: The `init()` method checks `RaveConstant.ENVIRONMENT`
+3. **URL Selection**: Based on the environment, either staging or live base URL is selected:
+   - **Staging:** `https://ravesandboxapi.flutterwave.com/`
+   - **Live:** `https://api.ravepay.co/`
+4. **Endpoint Construction**: All endpoint constants are constructed by appending specific paths to the base URL
+5. **Return Value**: The getter method returns the fully qualified endpoint URL
+
+## Best Practices
+
+- **Always configure `RaveConstant.ENVIRONMENT`** before creating `Endpoints` instances
+- **Create new instances** if you switch environments to ensure fresh endpoint configuration
+- **Use getter methods** instead of accessing fields directly for guaranteed initialization
+- **Cache endpoint instances** within the same environment context to avoid repeated initialization
+
+## Related
+
+- [RaveConstant](/api/rave-constant) - Configuration class that stores environment settings
+- [Environment](/api/environment) - Environment enum used for endpoint selection

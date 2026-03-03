@@ -1,0 +1,173 @@
+---
+title: 'Refund'
+description: 'Process transaction refunds'
+---
+
+## Overview
+
+The `Refund` class provides functionality to process refunds for completed transactions through the Flutterwave API. It allows merchants to return funds to customers for previously successful transactions.
+
+## Constructor
+
+```java
+Refund refund = new Refund();
+```
+
+## Setter Methods
+
+### setRef()
+
+Sets the reference for the transaction to be refunded.
+
+<ParamField path="ref" type="String" required>
+  The transaction reference (can be either the Flutterwave reference or the merchant transaction reference) for the transaction you want to refund
+</ParamField>
+
+```java
+refund.setRef("FLW-MOCK-b615f9bb4e4e8e70f4f00df0f19d58d8");
+```
+
+**Returns:** `void`
+
+## Getter Methods
+
+### getRef()
+
+Retrieves the transaction reference.
+
+```java
+String ref = refund.getRef();
+```
+
+**Returns:** `String` - The transaction reference
+
+## Public Methods
+
+### refund()
+
+Processes a refund for the specified transaction. This method sends a refund request to Flutterwave's refund endpoint.
+
+```java
+public JSONObject refund()
+```
+
+**Returns:** `JSONObject` - The refund response containing refund status and details
+
+**Example:**
+
+```java
+import com.github.theresasogunle.Refund;
+import org.json.JSONObject;
+
+public class RefundExample {
+    public static void main(String[] args) {
+        // Create refund instance
+        Refund refund = new Refund();
+        
+        // Set the transaction reference to refund
+        refund.setRef("FLW-MOCK-b615f9bb4e4e8e70f4f00df0f19d58d8");
+        
+        // Process the refund
+        JSONObject response = refund.refund();
+        
+        // Check response
+        if (response.getString("status").equals("success")) {
+            System.out.println("Refund processed successfully");
+            JSONObject data = response.getJSONObject("data");
+            System.out.println("Refund ID: " + data.getInt("id"));
+            System.out.println("Amount Refunded: " + data.getString("amount"));
+        } else {
+            System.out.println("Refund failed: " + response.getString("message"));
+        }
+    }
+}
+```
+
+<ResponseField name="status" type="String">
+  Status of the refund request (success or error)
+</ResponseField>
+
+<ResponseField name="message" type="String">
+  Response message describing the outcome
+</ResponseField>
+
+<ResponseField name="data" type="Object">
+  Refund details including:
+  - `id` - Unique refund ID
+  - `amount` - Amount refunded
+  - `status` - Current refund status
+  - `created_at` - Timestamp of refund creation
+</ResponseField>
+
+## Complete Usage Example
+
+```java
+import com.github.theresasogunle.Refund;
+import org.json.JSONObject;
+
+public class ProcessRefund {
+    public static void main(String[] args) {
+        try {
+            // Initialize refund object
+            Refund refund = new Refund();
+            
+            // Set transaction reference
+            // This can be either flw_ref or merchant txRef
+            String transactionReference = "FLW-MOCK-b615f9bb4e4e8e70f4f00df0f19d58d8";
+            refund.setRef(transactionReference);
+            
+            // Execute refund
+            JSONObject result = refund.refund();
+            
+            // Process response
+            if (result.has("status") && result.getString("status").equals("success")) {
+                JSONObject refundData = result.getJSONObject("data");
+                
+                System.out.println("=== Refund Successful ===");
+                System.out.println("Refund ID: " + refundData.getInt("id"));
+                System.out.println("Account ID: " + refundData.getInt("accountid"));
+                System.out.println("Transaction ID: " + refundData.getInt("txid"));
+                System.out.println("Flw Reference: " + refundData.getString("flwRef"));
+                System.out.println("Amount Refunded: " + refundData.getString("amount"));
+                System.out.println("Refund Status: " + refundData.getString("status"));
+                System.out.println("Created At: " + refundData.getString("createdAt"));
+            } else {
+                System.err.println("Refund failed: " + result.getString("message"));
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error processing refund: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+## Error Handling
+
+```java
+try {
+    Refund refund = new Refund();
+    refund.setRef("transaction-reference");
+    
+    JSONObject response = refund.refund();
+    
+    if (response.getString("status").equals("error")) {
+        String errorMessage = response.getString("message");
+        // Handle error appropriately
+        System.err.println("Refund Error: " + errorMessage);
+    }
+} catch (Exception e) {
+    // Handle exceptions
+    e.printStackTrace();
+}
+```
+
+## Notes
+
+- The secret key (`seckey`) is automatically retrieved from `RaveConstant.SECRET_KEY`
+- Refunds can only be processed on successful transactions
+- The reference parameter accepts both Flutterwave references (flw_ref) and merchant transaction references (txRef)
+- Partial refunds may be supported depending on your Flutterwave account configuration
+- Always verify the response status before considering a refund successful
+- Refund processing time may vary depending on the payment method and financial institution

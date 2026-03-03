@@ -1,0 +1,169 @@
+---
+title: 'Verify Transactions'
+description: 'Learn how to verify transaction status and confirm payment completion'
+icon: 'check-circle'
+---
+
+## Overview
+
+Transaction verification is a critical step in the payment flow. After initiating a charge, you must verify the transaction to confirm its actual status on Flutterwave's servers. This prevents issues with network failures, timeouts, or fraudulent responses.
+
+<Warning>
+Always verify transactions on your server-side before giving value to customers. Never rely solely on client-side responses.
+</Warning>
+
+## When to Verify Transactions
+
+You should verify transactions in these scenarios:
+
+- **After a successful charge response** - Confirm the transaction was actually completed
+- **On payment callback** - When users are redirected back to your application
+- **For failed transactions** - Requery failed transactions to check their actual status
+- **Webhook validation** - Verify webhook notifications before processing
+
+## Available Methods
+
+The `Transaction` class provides two verification methods:
+
+### verifyTransactionRequery()
+
+Verifies a transaction using the Flutterwave reference (`flwRef`) returned in the charge response.
+
+**Method Signature:**
+```java
+public JSONObject verifyTransactionRequery()
+```
+
+**Parameters:**
+- `flwref` - The Flutterwave reference from the charge response
+- `txRef` - Your transaction reference (optional)
+
+**Returns:** `JSONObject` containing transaction details
+
+### verifyTransactionXrequery()
+
+Verifies a transaction using your own transaction reference or the Flutterwave reference. This method provides additional filtering options.
+
+**Method Signature:**
+```java
+public JSONObject verifyTransactionXrequery()
+```
+
+**Parameters:**
+- `txRef` - Your unique transaction reference
+- `last_attempt` - Set to 1 to get only the last attempt
+- `only_successful` - Set to 1 to filter only successful transactions
+
+**Returns:** `JSONObject` containing transaction details
+
+## Setup
+
+<Steps>
+  <Step title="Configure API credentials">
+    Set up your Flutterwave API keys and environment:
+    
+    ```java
+    RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+    RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+    RaveConstant.ENVIRONMENT = Environment.STAGING; // or Environment.LIVE
+    ```
+  </Step>
+  
+  <Step title="Create Transaction instance">
+    Initialize a new `Transaction` object:
+    
+    ```java
+    Transaction transaction = new Transaction();
+    ```
+  </Step>
+  
+  <Step title="Set transaction reference">
+    Configure the transaction reference(s) you want to verify:
+    
+    ```java
+    transaction.setFlwref("FLW-MOCK-d310263f5f73e51d01e6dab32c893679")
+               .setTxRef("your-unique-tx-ref");
+    ```
+  </Step>
+  
+  <Step title="Verify the transaction">
+    Call the verification method:
+    
+    ```java
+    JSONObject response = transaction.verifyTransactionRequery();
+    System.out.println(response);
+    ```
+  </Step>
+</Steps>
+
+## Complete Example
+
+```java
+import com.github.theresasogunle.Transaction;
+import com.github.theresasogunle.RaveConstant;
+import com.github.theresasogunle.Environment;
+import org.json.JSONObject;
+
+public class VerifyTransaction {
+    public static void main(String[] args) {
+        // Configure API credentials
+        RaveConstant.PUBLIC_KEY = "FLWPUBK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.SECRET_KEY = "FLWSECK-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-X";
+        RaveConstant.ENVIRONMENT = Environment.STAGING;
+        
+        // Create transaction instance
+        Transaction t = new Transaction();
+        
+        // Set transaction references
+        t.setFlwref("FLW-MOCK-d310263f5f73e51d01e6dab32c893679")
+         .setTxRef("");
+        
+        // Verify using requery method
+        JSONObject response = t.verifyTransactionRequery();
+        System.out.println("Requery response: " + response);
+        
+        // Verify using xrequery method
+        JSONObject xrequeryResponse = t.verifyTransactionXrequery();
+        System.out.println("Xrequery response: " + xrequeryResponse);
+    }
+}
+```
+
+## Handling Verification Response
+
+The verification response contains important transaction details:
+
+```java
+JSONObject response = transaction.verifyTransactionRequery();
+
+// Check transaction status
+String status = response.getJSONObject("data").getString("status");
+
+if (status.equals("successful")) {
+    // Transaction was successful - give value to customer
+    String amount = response.getJSONObject("data").getString("amount");
+    String currency = response.getJSONObject("data").getString("currency");
+    // Process order fulfillment
+} else {
+    // Transaction failed or pending
+    // Handle accordingly
+}
+```
+
+<Note>
+The `verifyTransactionXrequery()` method is useful when you want to filter results by success status or retrieve only the last payment attempt.
+</Note>
+
+## Best Practices
+
+1. **Always verify server-side** - Never trust client-side responses alone
+2. **Store transaction references** - Keep both your `txRef` and Flutterwave's `flwRef` in your database
+3. **Handle timeouts gracefully** - If verification fails, retry with exponential backoff
+4. **Verify amounts** - Confirm the charged amount matches your expected amount
+5. **Use webhooks** - Implement webhook handlers for real-time payment notifications, but always verify webhook data
+
+## Next Steps
+
+- Learn about [refunding transactions](/transactions/refunds)
+- Understand [fee calculations](/transactions/fees)
+- Explore [card payment methods](/payments/card-payments)
