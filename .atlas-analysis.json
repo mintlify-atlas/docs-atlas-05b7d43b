@@ -1,0 +1,126 @@
+{
+  "projectType": "sdk-library",
+  "projectName": "Flutterwave Rave Java Library",
+  "projectDescription": "A Java library for integrating Flutterwave payment gateway into Java applications",
+  "theme": "mint",
+  "primaryColor": "#FF6B00",
+  "lightColor": "#FFA500",
+  "darkColor": "#CC5500",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart",
+              "configuration"
+            ]
+          },
+          {
+            "group": "Payment Methods",
+            "pages": [
+              "payments/card-payments",
+              "payments/account-payments",
+              "payments/alternative-payments",
+              "payments/preauthorization"
+            ]
+          },
+          {
+            "group": "Transaction Management",
+            "pages": [
+              "transactions/verify",
+              "transactions/refunds",
+              "transactions/fees"
+            ]
+          },
+          {
+            "group": "Utilities",
+            "pages": [
+              "utilities/banks",
+              "utilities/exchange-rates",
+              "utilities/encryption",
+              "utilities/checksum"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": [
+              "advanced/polling",
+              "advanced/error-handling",
+              "advanced/testing"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Core Classes",
+            "pages": [
+              "api/card-charge",
+              "api/account-charge",
+              "api/alternative-payment"
+            ]
+          },
+          {
+            "group": "Transaction Classes",
+            "pages": [
+              "api/transaction",
+              "api/refund",
+              "api/preauthorization"
+            ]
+          },
+          {
+            "group": "Utility Classes",
+            "pages": [
+              "api/bank",
+              "api/fees",
+              "api/exchange-rates",
+              "api/encryption",
+              "api/checksum"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "api/rave-constant",
+              "api/environment",
+              "api/endpoints"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Card payments (Mastercard, Verve, Visa, International)",
+    "Bank account charges with OTP validation",
+    "Alternative payment methods",
+    "Pre-authorization and capture",
+    "Transaction verification and polling",
+    "Refunds and fee calculation",
+    "Exchange rate queries",
+    "Built-in encryption and security",
+    "Support for staging and live environments"
+  ],
+  "publicApiSurface": [
+    "CardCharge",
+    "AccountCharge",
+    "AlternativePayment",
+    "PreAuthorization",
+    "Transaction",
+    "Refund",
+    "Bank",
+    "Fees",
+    "ExchangeRates",
+    "Encryption",
+    "IntegrityChecksum",
+    "RaveConstant",
+    "Environment"
+  ]
+}
